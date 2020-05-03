@@ -5,6 +5,14 @@ A Simple osu!API Wrapper
 `With this improvised "API", I intend to use it in my projects. I would not release it in open source. I decided to leave the source code released because I had trouble finding a Java Wrapper that worked correctly. I hope you enjoy the basic functions of this API`
 
 Sorry my english :3
+
+## Dependencias
+[http-request-3.0](https://github.com/kevinsawicki/http-request) - KevinSawicki
+
+[Gson-2.8.2](https://github.com/google/gson) - Google
+
+Utilizei somente essas duas dependencias.
+
 ## Simple Use
 I made it pretty simple.
 
