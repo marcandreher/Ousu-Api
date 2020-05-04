@@ -1,5 +1,6 @@
 package me.skiincraft.api.ousu.users;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.github.kevinsawicki.http.HttpRequest;
@@ -9,6 +10,7 @@ import me.skiincraft.api.ousu.OusuAPI;
 import me.skiincraft.api.ousu.exceptions.InvalidUserException;
 import me.skiincraft.api.ousu.json.EndPointUser;
 import me.skiincraft.api.ousu.modifiers.Gamemode;
+import me.skiincraft.api.ousu.modifiers.PlayedHours;
 import me.skiincraft.api.ousu.scores.Score;
 
 public class UserBuilder {
@@ -35,7 +37,7 @@ public class UserBuilder {
 		this.api = api;
 	}
 	
-	private void connectionRequest() throws InvalidUserException {
+	private void connectionRequest() {
 		HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", nameorid, "m", mode.getId()+"");
 		
 		if (nameorid == null || nameorid == "") {
@@ -54,7 +56,7 @@ public class UserBuilder {
 		}
 	}
 	
-	public User build() throws InvalidUserException {
+	public User build() {
 		connectionRequest();
 		
 		User us = new User() {
@@ -167,6 +169,35 @@ public class UserBuilder {
 			@Override
 			public List<Score> getRecentScore(int limit) {
 				return api.getRecentUser(user.getUser_id()+"", mode, limit);
+			}
+
+			@Override
+			public float getAccuracy() {
+				return user.getAccuracy();
+			}
+
+			@Override
+			public PlayedHours getPlayedHours() {
+				BigDecimal decimal = new BigDecimal(user.getTotal_seconds_played());
+			    long longVal = decimal.longValue();
+			    
+			    int hours = (int) longVal / 3600;
+			    int remainder = (int) longVal - hours * 3600;
+			    int mins = remainder / 60;
+			    remainder = remainder - mins * 60;
+			    int secs = remainder;
+
+			    return new PlayedHours(hours, mins, secs);
+			}
+
+			@Override
+			public String getCountryCode() {
+				return user.getCountry();
+			}
+
+			@Override
+			public String getURL() {
+				return "https://osu.ppy.sh/users/" + user.getUser_id();
 			}
 		};
 		return us;

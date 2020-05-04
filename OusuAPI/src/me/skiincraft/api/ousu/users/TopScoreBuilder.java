@@ -37,7 +37,7 @@ public class TopScoreBuilder {
 	
 	public TopScoreBuilder(String user, Gamemode mode ,int limit) {
 		this.user = user;
-		this.limit = 1;
+		this.limit = limit;
 		this.mode = mode;
 	}
 	
@@ -60,12 +60,12 @@ public class TopScoreBuilder {
 	}
 	
 	
-	public Score build() throws NoHistoryException {
+	public Score build() {
 		connectionRequest();
 		EndPointScore sc;
 		try {
 			 sc = score[0];
-		} catch(ArrayIndexOutOfBoundsException e) {
+		} catch(ArrayIndexOutOfBoundsException | NullPointerException e) {
 			throw new NoHistoryException("Este jogador solicitado não tem historico de mapas recentes.");
 		}
 		
@@ -93,18 +93,13 @@ public class TopScoreBuilder {
 			}
 			
 			@Override
-			public String getUsername() {
-				return sc.getUsername();
-			}
-			
-			@Override
 			public User getUser() {
 				return api.getUser(sc.getUser_id()+"");
 			}
 			
 			@Override
-			public int getScorePP() {
-				return Integer.valueOf(sc.getPp().replace(".", ""));
+			public float getScorePP() {
+				return sc.getPp();
 			}
 			
 			@Override
@@ -194,8 +189,10 @@ public class TopScoreBuilder {
 		};
 	}
 	
-	public List<Score> buildList() throws NoHistoryException {
+	public List<Score> buildList() {
+		connectionRequest();
 		List<Score> l = new ArrayList<Score>();
+		try {
 		for (EndPointScore sc : score) {
 			l.add(new Score() {
 				
@@ -221,18 +218,13 @@ public class TopScoreBuilder {
 				}
 				
 				@Override
-				public String getUsername() {
-					return sc.getUsername();
-				}
-				
-				@Override
 				public User getUser() {
 					return api.getUser(sc.getUser_id()+"");
 				}
 				
 				@Override
-				public int getScorePP() {
-					return Integer.valueOf(sc.getPp().replace(".", ""));
+				public float getScorePP() {
+					return sc.getPp();
 				}
 				
 				@Override
@@ -320,13 +312,13 @@ public class TopScoreBuilder {
 					return api.getBeatmapSet(api.getBeatmap(sc.getBeatmap_id()).getBeatmapSetID());
 				}
 			});
-			
-			try {
-				l.get(0).getBeatmapID();
-			} catch (IndexOutOfBoundsException e) {
-				throw new NoHistoryException("Este jogador não tem historico de melhores pontuações");
-			}
 		}
+		
+		l.get(0).getBeatmapID();
+		} catch (IndexOutOfBoundsException | NullPointerException e) {
+			throw new NoHistoryException("Este jogador não tem historico de melhores pontuações");
+		}
+		
 		return l;
 	}
 

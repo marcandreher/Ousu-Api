@@ -1,5 +1,10 @@
 package me.skiincraft.api.ousu.beatmaps;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,7 +32,7 @@ public class BeatmapBuilder {
 		this.beatmapid = id;
 	}
 	
-	private void connectionRequest() throws InvalidBeatmapException {
+	private void connectionRequest() {
 		HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", Integer.toString(beatmapid));
 		bc.accept("application/json").contentType();
 		
@@ -42,7 +47,7 @@ public class BeatmapBuilder {
 		
 	}
 	
-	public Beatmap build() throws InvalidBeatmapException {
+	public Beatmap build() {
 		connectionRequest();
 		return new Beatmap() {
 			
@@ -296,6 +301,46 @@ public class BeatmapBuilder {
 			@Override
 			public String getBeatmapThumbnailUrl() {
 				return "https://b.ppy.sh/thumb/"+ beatmap.getBeatmapset_id() +"l.jpg";
+			}
+
+			@Override
+			public String getSuccessRate() {
+				float plays = beatmap.getPlaycount();
+				float pass = beatmap.getPasscount();
+				
+				DecimalFormat df = new DecimalFormat("#.0");
+				
+				return df.format((pass*100)/plays) + "%";
+			}
+
+			@Override
+			public InputStream getBeatmapPreview() throws IOException  {
+				URLConnection conn = new URL("http://b.ppy.sh/preview/" + beatmap.getBeatmapset_id() + ".mp3").openConnection();
+				return conn.getInputStream();
+			}
+
+			@Override
+			public String getStarsEmoji() {
+				String dif = beatmap.getDifficultyrating() + "";
+				int one = Integer.valueOf(dif.charAt(0) + "");
+				int two = Integer.valueOf(dif.charAt(2) + "");
+				
+				StringBuffer fstars = new StringBuffer();
+				float stars = new Float(new DecimalFormat("#.0").format(getStars()).replace(",", "."));  
+						
+				for (int i = 0; i < one; i++) {
+					fstars.append("★");
+				}
+				if (two >= 5) {
+					return "**" + fstars.toString() + "✩** (" + stars + ")";
+				} else {
+					return "**" + fstars.toString() + "** (" + stars + ")";
+				}
+			}
+
+			@Override
+			public String getURL() {
+				return "https://osu.ppy.sh/beatmapsets/" + beatmap.getBeatmapset_id() + "#osu/" + beatmap.getBeatmap_id();
 			}
 		};
 	}

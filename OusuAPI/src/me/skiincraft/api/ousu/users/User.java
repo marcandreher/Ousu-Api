@@ -2,6 +2,7 @@ package me.skiincraft.api.ousu.users;
 
 import java.util.List;
 
+import me.skiincraft.api.ousu.modifiers.PlayedHours;
 import me.skiincraft.api.ousu.scores.Score;
 
 public interface User {
@@ -10,6 +11,10 @@ public interface User {
 	String getUserName();
 	String getJoinDate();
 	int getLevel();
+	String getCountryCode();
+	
+	
+	float getAccuracy();
 	
 	int get300();
 	int get100();
@@ -22,7 +27,10 @@ public interface User {
 	int getA();
 	
 	int getPlayCount();
+	PlayedHours getPlayedHours();
 	String getUserAvatar();
+	
+	String getURL();
 	
 	long getRankedScore();
 	long getTotalScore();

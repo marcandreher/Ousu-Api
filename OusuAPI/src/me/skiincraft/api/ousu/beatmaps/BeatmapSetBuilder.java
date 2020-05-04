@@ -1,5 +1,10 @@
 package me.skiincraft.api.ousu.beatmaps;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,7 +47,7 @@ public class BeatmapSetBuilder {
 		beatmap = us;
 	}
 	
-	public List<Beatmap> build() throws InvalidBeatmapException {
+	public List<Beatmap> build() {
 		connectionRequest();
 		List<Beatmap> l = new ArrayList<Beatmap>();
 		for (EndPointBeatmap bp : this.beatmap) {
@@ -298,6 +303,44 @@ public class BeatmapSetBuilder {
 				@Override
 				public String getBeatmapThumbnailUrl() {
 					return "https://b.ppy.sh/thumb/"+ bp.getBeatmapset_id() +"l.jpg";
+				}
+
+				@Override
+				public String getSuccessRate() {
+					float plays = bp.getPlaycount();
+					float pass = bp.getPasscount();
+					
+					DecimalFormat df = new DecimalFormat("#.0");
+					
+					return df.format((pass*100)/plays) + "%";
+				}
+
+				@Override
+				public InputStream getBeatmapPreview() throws IOException  {
+					URLConnection conn = new URL("http://b.ppy.sh/preview/" + bp.getBeatmapset_id() + ".mp3").openConnection();
+					return conn.getInputStream();
+				}
+
+				@Override
+				public String getStarsEmoji() {
+					String dif = bp.getDifficultyrating() + "";
+					int one = Integer.valueOf(dif.charAt(0) + "");
+					int two = Integer.valueOf(dif.charAt(2) + "");
+
+					String fullstars = "";
+					for (int i = 0; i < one; i++) {
+						fullstars += "★";
+					}
+					if (two >= 5) {
+						return "**" + fullstars + "✩** (" + getStars() + ")";
+					} else {
+						return "**" + fullstars + "** (" + getStars() + ")";
+					}
+				}
+
+				@Override
+				public String getURL() {
+					return "https://osu.ppy.sh/beatmapsets/" + bp.getBeatmapset_id() + "#osu/" + bp.getBeatmap_id();
 				}
 			});
 		}

@@ -1,5 +1,7 @@
 package me.skiincraft.api.ousu.beatmaps;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 
 import me.skiincraft.api.ousu.modifiers.Approvated;
@@ -44,6 +46,7 @@ public interface Beatmap {
 	int getCreatorId();
 	
 	float getBPM();
+	String getSuccessRate();
 	
 	String getSource();
 	String[] getTags();
@@ -63,8 +66,11 @@ public interface Beatmap {
 	int getMaxCombo();
 	
 	float getStars();
+	String getStarsEmoji();
+	
+	String getURL();
 	String getBeatmapCoverUrl();
 	String getBeatmapThumbnailUrl();
-	
+	InputStream getBeatmapPreview() throws IOException;
 
 }

@@ -42,7 +42,7 @@ public class RecentScoreBuilder {
 		this.mode = mode;
 	}
 	
-	private void connectionRequest() throws InvalidUserException {
+	private void connectionRequest() {
 		HttpRequest bc;
 		
 		if (user == null || user == "") {
@@ -66,12 +66,12 @@ public class RecentScoreBuilder {
 		this.api = api;
 	}
 	
-	public Score build() throws InvalidUserException, NoHistoryException {
+	public Score build() {
 		connectionRequest();
 		EndPointScore sc;
 		try {
 			sc = score[0];
-		} catch (ArrayIndexOutOfBoundsException e) {
+		} catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
 			throw new NoHistoryException("Este jogador solicitado não tem historico de mapas recentes.");
 		}
 		return new Score() {
@@ -98,18 +98,13 @@ public class RecentScoreBuilder {
 			}
 			
 			@Override
-			public String getUsername() {
-				return sc.getUsername();
-			}
-			
-			@Override
 			public User getUser() {
 				return api.getUser(sc.getUser_id()+"");
 			}
 			
 			@Override
-			public int getScorePP() {
-				return Integer.valueOf(sc.getPp().replace(".", ""));
+			public float getScorePP() {
+				return sc.getPp();
 			}
 			
 			@Override
@@ -199,9 +194,10 @@ public class RecentScoreBuilder {
 		};
 	}
 	
-	public List<Score> buildList() throws InvalidUserException, NoHistoryException {
+	public List<Score> buildList() {
 		connectionRequest();
 		List<Score> l = new ArrayList<Score>();
+		try {
 		for (EndPointScore sc : score) {
 			l.add(new Score() {
 				
@@ -227,18 +223,13 @@ public class RecentScoreBuilder {
 				}
 				
 				@Override
-				public String getUsername() {
-					return sc.getUsername();
-				}
-				
-				@Override
 				public User getUser() {
 					return api.getUser(sc.getUser_id()+"");
 				}
 				
 				@Override
-				public int getScorePP() {
-					return Integer.valueOf(sc.getPp().replace(".", ""));
+				public float getScorePP() {
+					return sc.getPp();
 				}
 				
 				@Override
@@ -327,9 +318,8 @@ public class RecentScoreBuilder {
 				}
 			});
 		}
-		try {
 			l.get(0).getMaxCombo();
-		} catch (IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException | NullPointerException e) {
 			throw new NoHistoryException("Este jogador solicitado não tem historico de mapas recentes.");
 		}
 		

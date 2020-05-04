@@ -18,7 +18,7 @@ public class EndPointScore {
     private int user_id;
     private String date;
     private String rank;
-    private String pp;
+    private float pp;
     private int replay_available;
 
 	
@@ -187,12 +187,13 @@ public class EndPointScore {
 	}
 
 
-	public String getPp() {
+	public float getPp() {
+		if (new Float(pp).toString() == null) return 0;
 		return pp;
 	}
 
 
-	public void setPp(String pp) {
+	public void setPp(float pp) {
 		this.pp = pp;
 	}
 

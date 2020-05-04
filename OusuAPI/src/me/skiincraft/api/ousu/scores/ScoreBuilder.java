@@ -46,7 +46,7 @@ public class ScoreBuilder {
 		this.api = api;
 	}
 	
-	private void connectionRequest() throws InvalidBeatmapException {
+	private void connectionRequest() {
 		HttpRequest bc;
 		if (user != null) {
 			bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapid+"", "u", user, "limit", "1");
@@ -72,7 +72,7 @@ public class ScoreBuilder {
 		
 	}
 	
-	public Score build() throws InvalidBeatmapException {
+	public Score build() {
 		connectionRequest();
 		EndPointScore sc = score[0];
 		return new Score() {
@@ -97,25 +97,15 @@ public class ScoreBuilder {
 				}
 				return true;
 			}
-			
-			@Override
-			public String getUsername() {
-				return sc.getUsername();
-			}
-			
+
 			@Override
 			public User getUser() {
-				try {
-					return new UserBuilder(sc.getUser_id()+"").build();
-				} catch (InvalidUserException e) {
-					e.printStackTrace();
-				}
-				return null;
+				return new UserBuilder(sc.getUser_id()+"").build();
 			}
 			
 			@Override
-			public int getScorePP() {
-				return Integer.valueOf(sc.getPp().replace(".", ""));
+			public float getScorePP() {
+				return sc.getPp();
 			}
 			
 			@Override
@@ -205,7 +195,7 @@ public class ScoreBuilder {
 		};
 	}
 	
-	public List<Score> buildList() throws InvalidBeatmapException, InvalidUserException {
+	public List<Score> buildList() {
 		connectionRequest();
 		List<Score> l = new ArrayList<Score>();
 		for (EndPointScore sc : score) {
@@ -233,11 +223,6 @@ public class ScoreBuilder {
 				}
 				
 				@Override
-				public String getUsername() {
-					return sc.getUsername();
-				}
-				
-				@Override
 				public User getUser() {
 					try {
 						return new UserBuilder(sc.getUser_id()+"").build();
@@ -248,8 +233,8 @@ public class ScoreBuilder {
 				}
 				
 				@Override
-				public int getScorePP() {
-					return Integer.valueOf(sc.getPp().replace(".", ""));
+				public float getScorePP() {
+					return sc.getPp();
 				}
 				
 				@Override

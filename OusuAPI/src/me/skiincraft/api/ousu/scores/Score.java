@@ -17,7 +17,6 @@ public interface Score {
 	
 	int getScore();
 	User getUser();
-	String getUsername();
 	
 	int getMaxCombo();
 	
@@ -34,7 +33,7 @@ public interface Score {
 	Mods[] getEnabledMods();
 	Date getScoreDate();
 	String getRank();
-	int getScorePP();
+	float getScorePP();
 	
 	
 
