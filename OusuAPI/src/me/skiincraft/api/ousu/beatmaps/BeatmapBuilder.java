@@ -8,6 +8,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.Gson;
 
 import me.skiincraft.api.ousu.OusuAPI;
+import me.skiincraft.api.ousu.exceptions.InvalidBeatmapException;
 import me.skiincraft.api.ousu.json.EndPointBeatmap;
 import me.skiincraft.api.ousu.modifiers.Approvated;
 import me.skiincraft.api.ousu.modifiers.Gamemode;
@@ -26,16 +27,22 @@ public class BeatmapBuilder {
 		this.beatmapid = id;
 	}
 	
-	private void connectionRequest() {
+	private void connectionRequest() throws InvalidBeatmapException {
 		HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", Integer.toString(beatmapid));
 		bc.accept("application/json").contentType();
 		
 		Gson g = new Gson();
 		EndPointBeatmap[] us = g.fromJson(bc.body(), EndPointBeatmap[].class);
-		beatmap = us[0];
+		
+		try {
+			beatmap = us[0];
+		} catch (ArrayIndexOutOfBoundsException e) {
+				throw new InvalidBeatmapException("Este beatmapID solicitado esta invalido. (id:"+ beatmapid +")");
+		}
+		
 	}
 	
-	public Beatmap build() {
+	public Beatmap build() throws InvalidBeatmapException {
 		connectionRequest();
 		return new Beatmap() {
 			

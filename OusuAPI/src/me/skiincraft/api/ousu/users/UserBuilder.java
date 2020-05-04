@@ -1,11 +1,15 @@
 package me.skiincraft.api.ousu.users;
 
+import java.util.List;
+
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.Gson;
 
 import me.skiincraft.api.ousu.OusuAPI;
+import me.skiincraft.api.ousu.exceptions.InvalidUserException;
 import me.skiincraft.api.ousu.json.EndPointUser;
 import me.skiincraft.api.ousu.modifiers.Gamemode;
+import me.skiincraft.api.ousu.scores.Score;
 
 public class UserBuilder {
 
@@ -19,7 +23,7 @@ public class UserBuilder {
 	
 	public UserBuilder(String nameorid) {
 		this.nameorid = nameorid;
-		this.mode = null;
+		this.mode = Gamemode.Standard;
 	}
 	
 	public UserBuilder(String nameorid, Gamemode mode) {
@@ -31,22 +35,28 @@ public class UserBuilder {
 		this.api = api;
 	}
 	
-	private void connectionRequest() {
-		HttpRequest bc;
-		if (mode == null) {
-			bc = HttpRequest.get(get, true, "k", api.getToken(), "u", nameorid);	
-		} else {
-			bc = HttpRequest.get(get, true, "k", api.getToken(), "u", nameorid, "m", mode.getId()+"");
+	private void connectionRequest() throws InvalidUserException {
+		HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", nameorid, "m", mode.getId()+"");
+		
+		if (nameorid == null || nameorid == "") {
+			throw new InvalidUserException("Usuário solicitado esta nulo.");
 		}
+		
 		bc.accept("application/json").contentType();
 		
 		Gson g = new Gson();
 		EndPointUser[] us = g.fromJson(bc.body(), EndPointUser[].class);
-		user = us[0];
+		
+		try {
+			user = us[0];	
+		} catch (ArrayIndexOutOfBoundsException e) {
+			throw new InvalidUserException("Este usuario solicitado não existe");
+		}
 	}
 	
-	public User build() {
+	public User build() throws InvalidUserException {
 		connectionRequest();
+		
 		User us = new User() {
 			
 			@Override
@@ -147,6 +157,16 @@ public class UserBuilder {
 			@Override
 			public String getUserAvatar() {
 				return "http://s.ppy.sh/a/" + user.getUser_id() + ".png";
+			}
+
+			@Override
+			public List<Score> getTopScore(int limit) {
+				return api.getTopUser(user.getUser_id()+"", mode, limit);
+			}
+
+			@Override
+			public List<Score> getRecentScore(int limit) {
+				return api.getRecentUser(user.getUser_id()+"", mode, limit);
 			}
 		};
 		return us;

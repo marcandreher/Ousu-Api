@@ -10,12 +10,13 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.Gson;
 
 import me.skiincraft.api.ousu.OusuAPI;
+import me.skiincraft.api.ousu.beatmaps.Beatmap;
+import me.skiincraft.api.ousu.exceptions.NoHistoryException;
 import me.skiincraft.api.ousu.json.EndPointScore;
 import me.skiincraft.api.ousu.modifiers.Gamemode;
 import me.skiincraft.api.ousu.modifiers.Mods;
 import me.skiincraft.api.ousu.scores.Score;
 import me.skiincraft.api.ousu.users.User;
-import me.skiincraft.api.ousu.users.UserBuilder;
 
 public class TopScoreBuilder {
 
@@ -59,9 +60,15 @@ public class TopScoreBuilder {
 	}
 	
 	
-	public Score build() {
+	public Score build() throws NoHistoryException {
 		connectionRequest();
-		EndPointScore sc = score[0];
+		EndPointScore sc;
+		try {
+			 sc = score[0];
+		} catch(ArrayIndexOutOfBoundsException e) {
+			throw new NoHistoryException("Este jogador solicitado não tem historico de mapas recentes.");
+		}
+		
 		return new Score() {
 			
 			@Override
@@ -92,7 +99,7 @@ public class TopScoreBuilder {
 			
 			@Override
 			public User getUser() {
-				return new UserBuilder(sc.getUser_id()+"").build();
+				return api.getUser(sc.getUser_id()+"");
 			}
 			
 			@Override
@@ -101,7 +108,7 @@ public class TopScoreBuilder {
 			}
 			
 			@Override
-			public int getScoreID() {
+			public long getScoreID() {
 				return sc.getScore_id();
 			}
 			
@@ -174,10 +181,20 @@ public class TopScoreBuilder {
 			public int get100() {
 				return sc.getCount100();
 			}
+
+			@Override
+			public Beatmap getBeatmap() {
+				return api.getBeatmap(sc.getBeatmap_id());
+			}
+
+			@Override
+			public List<Beatmap> getBeatmapSet() {
+				return api.getBeatmapSet(api.getBeatmap(sc.getBeatmap_id()).getBeatmapSetID());
+			}
 		};
 	}
 	
-	public List<Score> buildList() {
+	public List<Score> buildList() throws NoHistoryException {
 		List<Score> l = new ArrayList<Score>();
 		for (EndPointScore sc : score) {
 			l.add(new Score() {
@@ -210,7 +227,7 @@ public class TopScoreBuilder {
 				
 				@Override
 				public User getUser() {
-					return new UserBuilder(sc.getUser_id()+"").build();
+					return api.getUser(sc.getUser_id()+"");
 				}
 				
 				@Override
@@ -219,7 +236,7 @@ public class TopScoreBuilder {
 				}
 				
 				@Override
-				public int getScoreID() {
+				public long getScoreID() {
 					return sc.getScore_id();
 				}
 				
@@ -292,7 +309,23 @@ public class TopScoreBuilder {
 				public int get100() {
 					return sc.getCount100();
 				}
+
+				@Override
+				public Beatmap getBeatmap() {
+					return api.getBeatmap(sc.getBeatmap_id());
+				}
+
+				@Override
+				public List<Beatmap> getBeatmapSet() {
+					return api.getBeatmapSet(api.getBeatmap(sc.getBeatmap_id()).getBeatmapSetID());
+				}
 			});
+			
+			try {
+				l.get(0).getBeatmapID();
+			} catch (IndexOutOfBoundsException e) {
+				throw new NoHistoryException("Este jogador não tem historico de melhores pontuações");
+			}
 		}
 		return l;
 	}

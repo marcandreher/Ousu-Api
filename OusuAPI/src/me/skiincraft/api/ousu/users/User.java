@@ -1,5 +1,9 @@
 package me.skiincraft.api.ousu.users;
 
+import java.util.List;
+
+import me.skiincraft.api.ousu.scores.Score;
+
 public interface User {
 	
 	int getUserID();
@@ -29,5 +33,6 @@ public interface User {
 	int getPP();
 	Object[] getEvents();
 	
-
+	List<Score> getTopScore(int limit);
+	List<Score> getRecentScore(int limit);
 }

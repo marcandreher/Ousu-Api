@@ -10,6 +10,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.Gson;
 
 import me.skiincraft.api.ousu.OusuAPI;
+import me.skiincraft.api.ousu.exceptions.InvalidBeatmapException;
 import me.skiincraft.api.ousu.json.EndPointBeatmap;
 import me.skiincraft.api.ousu.modifiers.Approvated;
 import me.skiincraft.api.ousu.modifiers.Gamemode;
@@ -41,7 +42,7 @@ public class BeatmapSetBuilder {
 		beatmap = us;
 	}
 	
-	public List<Beatmap> build() {
+	public List<Beatmap> build() throws InvalidBeatmapException {
 		connectionRequest();
 		List<Beatmap> l = new ArrayList<Beatmap>();
 		for (EndPointBeatmap bp : this.beatmap) {
@@ -299,6 +300,12 @@ public class BeatmapSetBuilder {
 					return "https://b.ppy.sh/thumb/"+ bp.getBeatmapset_id() +"l.jpg";
 				}
 			});
+		}
+		
+		try {
+			l.get(0).getBPM();
+		} catch (IndexOutOfBoundsException e) {
+				throw new InvalidBeatmapException("Este beatmapID solicitado esta invalido. (id:"+ beatmapSetId +")");
 		}
 		return l;
 	}

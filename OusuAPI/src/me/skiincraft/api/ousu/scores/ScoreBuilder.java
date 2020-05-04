@@ -10,6 +10,9 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.Gson;
 
 import me.skiincraft.api.ousu.OusuAPI;
+import me.skiincraft.api.ousu.beatmaps.Beatmap;
+import me.skiincraft.api.ousu.exceptions.InvalidBeatmapException;
+import me.skiincraft.api.ousu.exceptions.InvalidUserException;
 import me.skiincraft.api.ousu.json.EndPointScore;
 import me.skiincraft.api.ousu.modifiers.Mods;
 import me.skiincraft.api.ousu.users.User;
@@ -43,9 +46,9 @@ public class ScoreBuilder {
 		this.api = api;
 	}
 	
-	private void connectionRequest() {
+	private void connectionRequest() throws InvalidBeatmapException {
 		HttpRequest bc;
-		if (user == null) {
+		if (user != null) {
 			bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapid+"", "u", user, "limit", "1");
 		} else {
 			bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapid+"", "limit", limit+"");
@@ -56,16 +59,20 @@ public class ScoreBuilder {
 		bc.accept("application/json").contentType();
 		String body = bc.body();
 		
+		try {
+		api.getBeatmap(beatmapid).getArtist();
+		} catch (NullPointerException e) {
+				throw new InvalidBeatmapException("Este beatmap solicitado não existe");
+		}
+		
 		System.out.println(body);
 		EndPointScore[] us = g.fromJson(body, EndPointScore[].class);
 		
-		for (EndPointScore s : us) {
-			s.setBeatmap_id(beatmapid);
-		}
 		score = us;
+		
 	}
 	
-	public Score build() {
+	public Score build() throws InvalidBeatmapException {
 		connectionRequest();
 		EndPointScore sc = score[0];
 		return new Score() {
@@ -98,7 +105,12 @@ public class ScoreBuilder {
 			
 			@Override
 			public User getUser() {
-				return new UserBuilder(sc.getUser_id()+"").build();
+				try {
+					return new UserBuilder(sc.getUser_id()+"").build();
+				} catch (InvalidUserException e) {
+					e.printStackTrace();
+				}
+				return null;
 			}
 			
 			@Override
@@ -107,7 +119,7 @@ public class ScoreBuilder {
 			}
 			
 			@Override
-			public int getScoreID() {
+			public long getScoreID() {
 				return sc.getScore_id();
 			}
 			
@@ -180,17 +192,28 @@ public class ScoreBuilder {
 			public int get100() {
 				return sc.getCount100();
 			}
+
+			@Override
+			public Beatmap getBeatmap() {
+				return api.getBeatmap(beatmapid);
+			}
+
+			@Override
+			public List<Beatmap> getBeatmapSet() {
+				return api.getBeatmapSet(api.getBeatmap(beatmapid).getBeatmapSetID());
+			}
 		};
 	}
 	
-	public List<Score> buildList() {
+	public List<Score> buildList() throws InvalidBeatmapException, InvalidUserException {
+		connectionRequest();
 		List<Score> l = new ArrayList<Score>();
 		for (EndPointScore sc : score) {
 			l.add(new Score() {
 				
 				@Override
 				public int getBeatmapID() {
-					return sc.getBeatmap_id();
+					return this.getBeatmapID();
 				}
 				
 				@Override
@@ -216,7 +239,12 @@ public class ScoreBuilder {
 				
 				@Override
 				public User getUser() {
-					return new UserBuilder(sc.getUser_id()+"").build();
+					try {
+						return new UserBuilder(sc.getUser_id()+"").build();
+					} catch (InvalidUserException e) {
+						e.printStackTrace();
+					}
+					return null;
 				}
 				
 				@Override
@@ -225,7 +253,7 @@ public class ScoreBuilder {
 				}
 				
 				@Override
-				public int getScoreID() {
+				public long getScoreID() {
 					return sc.getScore_id();
 				}
 				
@@ -298,7 +326,22 @@ public class ScoreBuilder {
 				public int get100() {
 					return sc.getCount100();
 				}
+
+				@Override
+				public Beatmap getBeatmap() {
+					return api.getBeatmap(beatmapid);
+				}
+
+				@Override
+				public List<Beatmap> getBeatmapSet() {
+					return api.getBeatmapSet(api.getBeatmap(beatmapid).getBeatmapSetID());
+				}
 			});
+		}
+		try {
+			l.get(0).get100();	
+		} catch (IndexOutOfBoundsException ex) {
+			throw new InvalidUserException("Não foi possivel pegar este score pois o jogador solicitado não está no historico");
 		}
 		return l;
 	}

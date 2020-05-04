@@ -3,7 +3,7 @@ package me.skiincraft.api.ousu.json;
 public class EndPointScore {
 
 	private int beatmap_id;
-    private int score_id;
+    private long score_id;
     private int score;
     private String username;
     private int maxcombo;
@@ -37,12 +37,12 @@ public class EndPointScore {
 	}
 
 
-	public int getScore_id() {
+	public long getScore_id() {
 		return score_id;
 	}
 
 
-	public void setScore_id(int score_id) {
+	public void setScore_id(long score_id) {
 		this.score_id = score_id;
 	}
 
