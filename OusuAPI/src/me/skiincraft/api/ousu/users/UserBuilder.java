@@ -41,7 +41,7 @@ public class UserBuilder {
 		HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", nameorid, "m", mode.getId()+"");
 		
 		if (nameorid == null || nameorid == "") {
-			throw new InvalidUserException("Usuário solicitado esta nulo.");
+			throw new InvalidUserException("Usuário solicitado esta nulo.", null);
 		}
 		
 		bc.accept("application/json").contentType();
@@ -52,7 +52,7 @@ public class UserBuilder {
 		try {
 			user = us[0];	
 		} catch (ArrayIndexOutOfBoundsException e) {
-			throw new InvalidUserException("Este usuario solicitado não existe");
+			throw new InvalidUserException("Este usuario solicitado não existe", e);
 		}
 	}
 	

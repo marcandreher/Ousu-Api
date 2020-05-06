@@ -66,7 +66,7 @@ public class TopScoreBuilder {
 		try {
 			 sc = score[0];
 		} catch(ArrayIndexOutOfBoundsException | NullPointerException e) {
-			throw new NoHistoryException("Este jogador solicitado não tem historico de mapas recentes.");
+			throw new NoHistoryException("Este jogador solicitado não tem historico de mapas recentes.", e);
 		}
 		
 		return new Score() {
@@ -316,7 +316,7 @@ public class TopScoreBuilder {
 		
 		l.get(0).getBeatmapID();
 		} catch (IndexOutOfBoundsException | NullPointerException e) {
-			throw new NoHistoryException("Este jogador não tem historico de melhores pontuações");
+			throw new NoHistoryException("Este jogador não tem historico de melhores pontuações", e);
 		}
 		
 		return l;

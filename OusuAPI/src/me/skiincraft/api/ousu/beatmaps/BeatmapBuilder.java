@@ -42,7 +42,7 @@ public class BeatmapBuilder {
 		try {
 			beatmap = us[0];
 		} catch (ArrayIndexOutOfBoundsException e) {
-				throw new InvalidBeatmapException("Este beatmapID solicitado esta invalido. (id:"+ beatmapid +")");
+				throw new InvalidBeatmapException("Este beatmapID solicitado esta invalido. (id:"+ beatmapid +")", e);
 		}
 		
 	}

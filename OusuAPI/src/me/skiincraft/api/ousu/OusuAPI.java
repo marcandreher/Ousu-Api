@@ -24,7 +24,7 @@ public class OusuAPI {
 		this.setToken(token);
 		
 		if (token == null || token == "") {
-				throw new InvalidTokenException("API Key esta nula, insira uma API Key.");
+				throw new InvalidTokenException("API Key esta nula, insira uma API Key.", null);
 		}
 		
 		
@@ -34,7 +34,7 @@ public class OusuAPI {
 		
 		if (body.contains("Please provide a valid API key.")) {
 			try {
-				throw new InvalidTokenException("Insira uma API key valida.");
+				throw new InvalidTokenException("Insira uma API key valida.", null);
 			} catch (InvalidTokenException e) {
 				e.printStackTrace();
 				return;

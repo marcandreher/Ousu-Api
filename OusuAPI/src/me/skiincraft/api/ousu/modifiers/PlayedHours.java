@@ -43,7 +43,7 @@ public class PlayedHours {
 	@Override
 	public String toString() {
 		if (getDays() == 0) {
-			return horas/60 + "h" + minutos + "m";
+			return horas + "h" + minutos + "m";
 		}
 		if (getHours() == 0) {
 			return minutos + "m " + segundos + "s";

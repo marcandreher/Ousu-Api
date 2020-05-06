@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import me.skiincraft.api.ousu.json.EndPointBeatmap;
 import me.skiincraft.api.ousu.modifiers.Approvated;
 import me.skiincraft.api.ousu.modifiers.Gamemode;
 import me.skiincraft.api.ousu.modifiers.Genre;
+import me.skiincraft.api.ousu.utils.SortBeatmap;
 
 public class BeatmapSetBuilder {
 
@@ -39,7 +41,7 @@ public class BeatmapSetBuilder {
 	}
 	
 	private void connectionRequest() {
-		HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", Integer.toString(beatmapSetId));
+		HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "s", Integer.toString(beatmapSetId));
 		bc.accept("application/json").contentType();
 		
 		Gson g = new Gson();
@@ -348,8 +350,9 @@ public class BeatmapSetBuilder {
 		try {
 			l.get(0).getBPM();
 		} catch (IndexOutOfBoundsException e) {
-				throw new InvalidBeatmapException("Este beatmapID solicitado esta invalido. (id:"+ beatmapSetId +")");
+				throw new InvalidBeatmapException("Este beatmapID solicitado esta invalido. (id:"+ beatmapSetId +")", e);
 		}
+		Collections.sort(l, new SortBeatmap());
 		return l;
 	}
 

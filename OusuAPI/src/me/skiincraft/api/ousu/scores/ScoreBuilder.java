@@ -62,7 +62,7 @@ public class ScoreBuilder {
 		try {
 		api.getBeatmap(beatmapid).getArtist();
 		} catch (NullPointerException e) {
-				throw new InvalidBeatmapException("Este beatmap solicitado não existe");
+				throw new InvalidBeatmapException("Este beatmap solicitado não existe", e);
 		}
 		
 		System.out.println(body);
@@ -326,7 +326,7 @@ public class ScoreBuilder {
 		try {
 			l.get(0).get100();	
 		} catch (IndexOutOfBoundsException ex) {
-			throw new InvalidUserException("Não foi possivel pegar este score pois o jogador solicitado não está no historico");
+			throw new InvalidUserException("Não foi possivel pegar este score pois o jogador solicitado não está no historico", ex);
 		}
 		return l;
 	}
