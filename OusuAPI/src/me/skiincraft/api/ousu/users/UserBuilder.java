@@ -199,6 +199,11 @@ public class UserBuilder {
 			public String getURL() {
 				return "https://osu.ppy.sh/users/" + user.getUser_id();
 			}
+
+			@Override
+			public String getUserFlag() {
+				return "https://osu.ppy.sh/images/flags/" + user.getCountry() + ".png";
+			}
 		};
 		return us;
 	}

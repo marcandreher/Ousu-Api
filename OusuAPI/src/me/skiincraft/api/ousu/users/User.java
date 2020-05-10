@@ -29,6 +29,7 @@ public interface User {
 	int getPlayCount();
 	PlayedHours getPlayedHours();
 	String getUserAvatar();
+	String getUserFlag();
 	
 	String getURL();
 	
