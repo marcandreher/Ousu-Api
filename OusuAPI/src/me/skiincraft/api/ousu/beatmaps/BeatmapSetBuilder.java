@@ -328,15 +328,17 @@ public class BeatmapSetBuilder {
 					String dif = bp.getDifficultyrating() + "";
 					int one = Integer.valueOf(dif.charAt(0) + "");
 					int two = Integer.valueOf(dif.charAt(2) + "");
-
-					String fullstars = "";
+					
+					StringBuffer fstars = new StringBuffer();
+					float stars = new Float(new DecimalFormat("#.0").format(getStars()).replace(",", "."));  
+							
 					for (int i = 0; i < one; i++) {
-						fullstars += "★";
+						fstars.append("★");
 					}
 					if (two >= 5) {
-						return "**" + fullstars + "✩** (" + getStars() + ")";
+						return "**" + fstars.toString() + "✩** (" + stars + ")";
 					} else {
-						return "**" + fullstars + "** (" + getStars() + ")";
+						return "**" + fstars.toString() + "** (" + stars + ")";
 					}
 				}
 
