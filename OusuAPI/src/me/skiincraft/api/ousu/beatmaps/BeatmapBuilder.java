@@ -136,6 +136,7 @@ public class BeatmapBuilder {
 			@Override
 			public Date getPublishDate() {
 				try {
+					if (beatmap.getSubmit_date() == null)return new Date();
 					return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(beatmap.getSubmit_date());
 				} catch (ParseException e) {
 					e.printStackTrace();
@@ -161,6 +162,7 @@ public class BeatmapBuilder {
 			@Override
 			public Date getLastUpdateDate() {
 				try {
+					if (beatmap.getLast_update() == null)return new Date();
 					return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(beatmap.getLast_update());
 				} catch (ParseException e) {
 					e.printStackTrace();
@@ -276,6 +278,7 @@ public class BeatmapBuilder {
 			@Override
 			public Date getApprovedDate() {
 				try {
+					if (beatmap.getApproved_date() == null)return new Date();
 					return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(beatmap.getApproved_date());
 				} catch (ParseException e) {
 					e.printStackTrace();

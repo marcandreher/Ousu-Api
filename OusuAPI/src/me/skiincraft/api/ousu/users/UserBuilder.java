@@ -181,13 +181,14 @@ public class UserBuilder {
 				BigDecimal decimal = new BigDecimal(user.getTotal_seconds_played());
 			    long longVal = decimal.longValue();
 			    
-			    int hours = (int) longVal / 3600;
-			    int remainder = (int) longVal - hours * 3600;
+			    int days = (int)longVal / 86400;
+			    int remainder = (int) longVal - days * 86400;
+			    int hours = remainder / 3600;
+			    remainder = remainder - hours *3600;
 			    int mins = remainder / 60;
-			    remainder = remainder - mins * 60;
-			    int secs = remainder;
+			    int secs = remainder - mins / 60;
 
-			    return new PlayedHours(hours, mins, secs);
+			    return new PlayedHours(days ,hours, mins, secs);
 			}
 
 			@Override

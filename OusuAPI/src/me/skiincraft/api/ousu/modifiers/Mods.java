@@ -8,44 +8,46 @@ import java.util.stream.Collectors;
 
 public enum Mods {
 
-	NO_FAIL(1, "No Fail"),
-	EASY(2, "Easy"),
-	TOUCH_DEVICE(4, "Touch Device"),
-	HIDDEN(8, "Hidden"),
-	HARD_ROCK(16, "Hard Rock"),
-	SUDDEN_DEATH(32, "Sudden Death"),
-	DOUBLE_TIME(64, "Double Time"),
-	RELAX(128, "Relax"),
-	HALF_TIME(256, "Half Time"),
-	NIGHTCORE(512, "Nightcore"),
-	FLASHLIGHT(1024, "Flashlight"),
-	AUTOPLAY(2048, "Autoplay"),
-	SPUNOUT(4096, "Spunout"),
-	AUTOPILOT(8192, "Autopilot"),
-	PERFECT(16384, "Perfect"),
-	KEY_4(32768, "4K"),
-	KEY_5(65536, "5K"),
-	KEY_6(131072, "6K"),
-	KEY_7(262144, "7K"),
-	KEY_8(524288, "8K"),
-	FADE_IN(1048576, "Fade-In"),
-	RANDOM(2097152, "Random"),
-	CINEMA(4194304, "Cinema"),
-	TARGET(8388608, "Target Practice"),
-	KEY_9(16777216, "9K"),
-	KEY_COOP(33554432, "Co-Op"),
-	KEY_1(67108864, "1K"),
-	KEY_3(134217728, "3K"),
-	KEY_2(268435456, "2K"),
-	SCORE_V2(536870912, "Score v2"),
-	LAST_MOD(1073741824, "Last Mod");
+	NO_FAIL(1, "No Fail", "NF"),
+	EASY(2, "Easy", "EZ"),
+	TOUCH_DEVICE(4, "Touch Device", "TD"),
+	HIDDEN(8, "Hidden", "HD"),
+	HARD_ROCK(16, "Hard Rock", "HR"),
+	SUDDEN_DEATH(32, "Sudden Death", "SD"),
+	DOUBLE_TIME(64, "Double Time", "DT"),
+	RELAX(128, "Relax", "RX"),
+	HALF_TIME(256, "Half Time", "HF"),
+	NIGHTCORE(512, "Nightcore","NC"),
+	FLASHLIGHT(1024, "Flashlight", "FL"),
+	AUTOPLAY(2048, "Autoplay", "AU"),
+	SPUNOUT(4096, "Spunout", "SO"),
+	AUTOPILOT(8192, "Autopilot", "AU"),
+	PERFECT(16384, "Perfect","PF"),
+	KEY_1(67108864, "1K","1K"),
+	KEY_3(134217728, "3K", "3K"),
+	KEY_2(268435456, "2K", "2K"),
+	KEY_4(32768, "4K", "4K"),
+	KEY_5(65536, "5K", "5K"),
+	KEY_6(131072, "6K", "6K"),
+	KEY_7(262144, "7K", "7K"),
+	KEY_8(524288, "8K", "8K"),
+	KEY_9(16777216, "9K", "9K"),
+	FADE_IN(1048576, "Fade-In", "Fade_In"),
+	RANDOM(2097152, "Random", "Random"),
+	CINEMA(4194304, "Cinema", "Cine"),
+	TARGET(8388608, "Target Practice", "TC"),
+	KEY_COOP(33554432, "Co-Op", "Co-op"),
+	SCORE_V2(536870912, "Score v2", "2xScore"),
+	LAST_MOD(1073741824, "Last Mod", "Last Mod");
 	
 	private long id;
 	private String displayName;
+	private String sigla;
 	
-	Mods(int id, String displayName) {
+	Mods(int id, String displayName, String sigla) {
 		this.id = id;
-		this.displayName = displayName; 
+		this.displayName = displayName;
+		this.sigla = sigla; 
 	}
 	
 	// Author - \'/
@@ -71,6 +73,10 @@ public enum Mods {
 	
 	public long getId() {
 		return this.id;
+	}
+	
+	public String getCode() {
+		return sigla;
 	}
 	
 	public String getDisplayName() {

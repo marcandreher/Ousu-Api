@@ -23,17 +23,24 @@ import me.skiincraft.api.ousu.modifiers.Gamemode;
 import me.skiincraft.api.ousu.modifiers.Genre;
 import me.skiincraft.api.ousu.utils.SortBeatmap;
 
-public class BeatmapSetBuilder {
+public class BeatmapFromCreatorBuilder {
 
 	private String get = "https://osu.ppy.sh/api/get_beatmaps";
 	private OusuAPI api;
 	
 	private EndPointBeatmap[] beatmap;
 	
-	private int beatmapSetId;
+	private String username;
+	private int limit;
 	
-	public BeatmapSetBuilder(int setId) {
-		this.beatmapSetId = setId;
+	public BeatmapFromCreatorBuilder(String username, int limit) {
+		this.username = username;
+		this.limit = limit;
+	}
+	
+	public BeatmapFromCreatorBuilder(String username) {
+		this.username = username;
+		this.limit = 10;
 	}
 	
 	public void setAPI(OusuAPI api) {
@@ -41,7 +48,7 @@ public class BeatmapSetBuilder {
 	}
 	
 	private void connectionRequest() {
-		HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "s", Integer.toString(beatmapSetId));
+		HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", username, "limit", limit+"");
 		bc.accept("application/json").contentType();
 		
 		Gson g = new Gson();
@@ -355,7 +362,7 @@ public class BeatmapSetBuilder {
 		try {
 			l.get(0).getBPM();
 		} catch (IndexOutOfBoundsException e) {
-				throw new InvalidBeatmapException("Este beatmapID solicitado esta invalido. (id:"+ beatmapSetId +")", e);
+				throw new InvalidBeatmapException("Este usuário solicitado não criou nenhum beatmap. (u:"+ username +")", e);
 		}
 		Collections.sort(l, new SortBeatmap());
 		return l;

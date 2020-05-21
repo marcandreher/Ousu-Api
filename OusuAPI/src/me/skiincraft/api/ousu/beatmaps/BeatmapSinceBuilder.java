@@ -23,17 +23,17 @@ import me.skiincraft.api.ousu.modifiers.Gamemode;
 import me.skiincraft.api.ousu.modifiers.Genre;
 import me.skiincraft.api.ousu.utils.SortBeatmap;
 
-public class BeatmapSetBuilder {
+public class BeatmapSinceBuilder {
 
 	private String get = "https://osu.ppy.sh/api/get_beatmaps";
 	private OusuAPI api;
 	
 	private EndPointBeatmap[] beatmap;
 	
-	private int beatmapSetId;
+	private Date date;
 	
-	public BeatmapSetBuilder(int setId) {
-		this.beatmapSetId = setId;
+	public BeatmapSinceBuilder(Date date) {
+		this.date = date;
 	}
 	
 	public void setAPI(OusuAPI api) {
@@ -41,7 +41,8 @@ public class BeatmapSetBuilder {
 	}
 	
 	private void connectionRequest() {
-		HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "s", Integer.toString(beatmapSetId));
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "since", sdf.format(date));
 		bc.accept("application/json").contentType();
 		
 		Gson g = new Gson();
@@ -355,7 +356,8 @@ public class BeatmapSetBuilder {
 		try {
 			l.get(0).getBPM();
 		} catch (IndexOutOfBoundsException e) {
-				throw new InvalidBeatmapException("Este beatmapID solicitado esta invalido. (id:"+ beatmapSetId +")", e);
+				throw new InvalidBeatmapException("Não existe nenhum beatmap nessa data solicitada. "
+						+ "(since:"+ new SimpleDateFormat("yyyy-MM-dd").format(date) +")", e);
 		}
 		Collections.sort(l, new SortBeatmap());
 		return l;

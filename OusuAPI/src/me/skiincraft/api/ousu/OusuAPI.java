@@ -1,14 +1,19 @@
 package me.skiincraft.api.ousu;
 
+import java.util.Date;
 import java.util.List;
 
 import com.github.kevinsawicki.http.HttpRequest;
 
 import me.skiincraft.api.ousu.beatmaps.Beatmap;
 import me.skiincraft.api.ousu.beatmaps.BeatmapBuilder;
+import me.skiincraft.api.ousu.beatmaps.BeatmapSinceBuilder;
+import me.skiincraft.api.ousu.beatmaps.BeatmapFromCreatorBuilder;
 import me.skiincraft.api.ousu.beatmaps.BeatmapSetBuilder;
 import me.skiincraft.api.ousu.exceptions.InvalidTokenException;
 import me.skiincraft.api.ousu.modifiers.Gamemode;
+import me.skiincraft.api.ousu.replay.Replay;
+import me.skiincraft.api.ousu.replay.ReplayBuilder;
 import me.skiincraft.api.ousu.scores.Score;
 import me.skiincraft.api.ousu.scores.ScoreBuilder;
 import me.skiincraft.api.ousu.users.RecentScoreBuilder;
@@ -40,11 +45,10 @@ public class OusuAPI {
 				return;
 			}
 		}
-		
 	}
 
 	public static void main(String[] args) {
-		//Ignore this
+		//Ignore this.
 	}
 	
 	public Beatmap getBeatmap(int id) {
@@ -67,6 +71,24 @@ public class OusuAPI {
 	
 	public Score getBeatmapScore(int beatmapid, String user) {
 		ScoreBuilder cons = new ScoreBuilder(beatmapid, user);
+		cons.setAPI(this);
+			return cons.build();
+	}
+	
+	public List<Beatmap> getBeatmapFromCreator(String username) {
+		BeatmapFromCreatorBuilder cons = new BeatmapFromCreatorBuilder(username);
+		cons.setAPI(this);
+			return cons.build();
+	}
+	
+	public List<Beatmap> getBeatmapFromCreator(String username, int limit) {
+		BeatmapFromCreatorBuilder cons = new BeatmapFromCreatorBuilder(username, limit);
+		cons.setAPI(this);
+			return cons.build();
+	}
+	
+	public List<Beatmap> getBeatmapSince(Date date) {
+		BeatmapSinceBuilder cons = new BeatmapSinceBuilder(date);
 		cons.setAPI(this);
 			return cons.build();
 	}
@@ -137,6 +159,12 @@ public class OusuAPI {
 		return cons.build();
 	}
 	
+	public Replay getReplay(String user, int beatmapid) {
+		ReplayBuilder cons = new ReplayBuilder(beatmapid, user);
+		cons.setAPI(this);
+		return cons.build();
+	}
+	
 	public User getUser(int user, Gamemode mode) {
 		UserBuilder cons = new UserBuilder(user+"", mode);
 		cons.setAPI(this);
@@ -150,6 +178,5 @@ public class OusuAPI {
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
 
 }

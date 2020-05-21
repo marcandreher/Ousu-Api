@@ -1,34 +1,24 @@
 package me.skiincraft.api.ousu.modifiers;
 
-import java.text.DecimalFormat;
-
 public class PlayedHours {
 	
+	private int days;
 	private int horas;
 	private int minutos;
 	private int segundos;
 	
-	public PlayedHours(int hours ,int minutes,int secounds) {
+	public PlayedHours(int days ,int hours ,int minutes,int secounds) {
+		this.days = days;
 		this.horas = hours;
 		this.minutos = minutes;
 		this.segundos = secounds;
 	}
 	
 	public int getDays() {
-		return horas/24;
+		return days;
 	}
 	
 	public int getHours() {
-		float f = new Float(horas);
-		f = f/60;
-		String h = new DecimalFormat("#.0").format(f)
-				.replace(".", "")
-				.replace(",", "");
-		
-		return Integer.valueOf(h);
-	}
-	
-	public int getTotalHours() {
 		return horas;
 	}
 

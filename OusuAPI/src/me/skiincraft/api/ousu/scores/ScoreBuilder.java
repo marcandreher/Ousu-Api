@@ -28,18 +28,25 @@ public class ScoreBuilder {
 	private int beatmapid;
 	private int limit;
 	
+	private ScoreType type;
+	
 	private String user;
 	
 	public ScoreBuilder(int beatmapid, int limit) {
 		this.beatmapid = beatmapid;
 		this.limit = limit;
 		this.user = null;
+		type = ScoreType.Beatmap;
 	}
 	
 	public ScoreBuilder(int beatmapid, String user) {
 		this.beatmapid = beatmapid;
 		this.limit = 1;
-		this.user = user;
+		type = ScoreType.User;
+	}
+	
+	private enum ScoreType{
+		User, Beatmap;
 	}
 	
 	public void setAPI(OusuAPI api) {
@@ -48,7 +55,7 @@ public class ScoreBuilder {
 	
 	private void connectionRequest() {
 		HttpRequest bc;
-		if (user != null) {
+		if (type == ScoreType.User) {
 			bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapid+"", "u", user, "limit", "1");
 		} else {
 			bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapid+"", "limit", limit+"");
