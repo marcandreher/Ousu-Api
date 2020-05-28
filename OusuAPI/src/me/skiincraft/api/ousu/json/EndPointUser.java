@@ -1,5 +1,8 @@
 package me.skiincraft.api.ousu.json;
 
+import java.util.List;
+import java.util.Map;
+
 public class EndPointUser {
 	
 	private int user_id;
@@ -30,8 +33,7 @@ public class EndPointUser {
     private String country;
     private long total_seconds_played;
     private int pp_country_rank;
-	
-	private Object[] events;
+    private List<Map<String, Object>> events;
 
 	
 	public EndPointUser() {
@@ -249,12 +251,12 @@ public class EndPointUser {
 	}
 
 
-	public Object[] getEvents() {
+	public List<Map<String,Object>> getEvents() {
 		return events;
 	}
 
 
-	public void setEvents(Object[] events) {
+	public void setEvents(List<Map<String,Object>> events) {
 		this.events = events;
 	}
 	

@@ -1,16 +1,18 @@
 package me.skiincraft.api.ousu.users;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.Gson;
-
 import me.skiincraft.api.ousu.OusuAPI;
 import me.skiincraft.api.ousu.exceptions.InvalidUserException;
 import me.skiincraft.api.ousu.json.EndPointUser;
 import me.skiincraft.api.ousu.modifiers.Gamemode;
-import me.skiincraft.api.ousu.modifiers.PlayedHours;
+import me.skiincraft.api.ousu.modifiers.PlayedTime;
+import me.skiincraft.api.ousu.modifiers.ProfileEvents;
 import me.skiincraft.api.ousu.scores.Score;
 
 public class UserBuilder {
@@ -132,8 +134,25 @@ public class UserBuilder {
 			}
 			
 			@Override
-			public Object[] getEvents() {
-				return user.getEvents();
+			public List<ProfileEvents> getProfileEvents() {
+				List<ProfileEvents> evnlist = new ArrayList<ProfileEvents>();
+				if (user.getEvents() == null) {
+					return evnlist;
+				}
+				
+				if (user.getEvents().size() == 0) {
+					return evnlist;
+				}
+				for (Map<String, Object> evn : user.getEvents()) {
+					evnlist.add(new ProfileEvents(
+							String.valueOf(evn.get("display_html")), 
+							Integer.valueOf((String) evn.get("beatmap_id")), 
+							Integer.valueOf((String) evn.get("beatmapset_id")),
+							String.valueOf(evn.get("date")),
+							Integer.valueOf((String) evn.get("epicfactor"))));
+				}
+				
+				return evnlist;
 			}
 			
 			@Override
@@ -177,7 +196,7 @@ public class UserBuilder {
 			}
 
 			@Override
-			public PlayedHours getPlayedHours() {
+			public PlayedTime getPlayedHours() {
 				BigDecimal decimal = new BigDecimal(user.getTotal_seconds_played());
 			    long longVal = decimal.longValue();
 			    
@@ -188,7 +207,7 @@ public class UserBuilder {
 			    int mins = remainder / 60;
 			    int secs = remainder - mins / 60;
 
-			    return new PlayedHours(days ,hours, mins, secs);
+			    return new PlayedTime(days ,hours, mins, secs);
 			}
 
 			@Override

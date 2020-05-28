@@ -27,6 +27,7 @@ public class ScoreBuilder {
 	
 	private int beatmapid;
 	private int limit;
+	private Beatmap beatmap;
 	
 	private ScoreType type;
 	
@@ -67,7 +68,8 @@ public class ScoreBuilder {
 		String body = bc.body();
 		
 		try {
-		api.getBeatmap(beatmapid).getArtist();
+			beatmap = api.getBeatmap(beatmapid);
+			beatmap.getArtist();
 		} catch (NullPointerException e) {
 				throw new InvalidBeatmapException("Este beatmap solicitado não existe", e);
 		}
@@ -192,12 +194,12 @@ public class ScoreBuilder {
 
 			@Override
 			public Beatmap getBeatmap() {
-				return api.getBeatmap(beatmapid);
+				return beatmap;
 			}
 
 			@Override
 			public List<Beatmap> getBeatmapSet() {
-				return api.getBeatmapSet(api.getBeatmap(beatmapid).getBeatmapSetID());
+				return api.getBeatmapSet(beatmap.getBeatmapSetID());
 			}
 		};
 	}
@@ -321,12 +323,12 @@ public class ScoreBuilder {
 
 				@Override
 				public Beatmap getBeatmap() {
-					return api.getBeatmap(beatmapid);
+					return beatmap;
 				}
 
 				@Override
 				public List<Beatmap> getBeatmapSet() {
-					return api.getBeatmapSet(api.getBeatmap(beatmapid).getBeatmapSetID());
+					return api.getBeatmapSet(getBeatmap().getBeatmapSetID());
 				}
 			});
 		}

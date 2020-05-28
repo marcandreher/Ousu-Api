@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 
 import me.skiincraft.api.ousu.OusuAPI;
 import me.skiincraft.api.ousu.beatmaps.Beatmap;
+import me.skiincraft.api.ousu.exceptions.InvalidUserException;
 import me.skiincraft.api.ousu.exceptions.NoHistoryException;
 import me.skiincraft.api.ousu.json.EndPointScore;
 import me.skiincraft.api.ousu.modifiers.Gamemode;
@@ -43,6 +44,10 @@ public class TopScoreBuilder {
 	
 	private void connectionRequest() {
 		HttpRequest bc;
+		if (user == null || user == "") {
+			throw new InvalidUserException("O usuario informado não existe", null);
+		}
+		
 		if (mode == null) {
 			bc = HttpRequest.get(get, true, "k", api.getToken(), "u", user, "limit", limit+"");	
 		} else {

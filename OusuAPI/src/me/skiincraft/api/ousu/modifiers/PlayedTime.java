@@ -1,13 +1,13 @@
 package me.skiincraft.api.ousu.modifiers;
 
-public class PlayedHours {
+public class PlayedTime {
 	
 	private int days;
 	private int horas;
 	private int minutos;
 	private int segundos;
 	
-	public PlayedHours(int days ,int hours ,int minutes,int secounds) {
+	public PlayedTime(int days ,int hours ,int minutes,int secounds) {
 		this.days = days;
 		this.horas = hours;
 		this.minutos = minutes;
