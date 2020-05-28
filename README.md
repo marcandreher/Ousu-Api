@@ -8,7 +8,9 @@ Sorry my english :3
 
 ## Dependencias
 [http-request-3.0](https://github.com/kevinsawicki/http-request) - KevinSawicki
+
 Jsoup - idk
+
 [Gson-2.8.2](https://github.com/google/gson) - Google
 
 Utilizei somente essas duas dependencias.
