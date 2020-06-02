@@ -7,14 +7,38 @@ A Simple osu!API Wrapper
 Sorry my english :3
 
 ## Dependencias
-[http-request-3.0](https://github.com/kevinsawicki/http-request) - KevinSawicki
+The dependencies are inside build.gradle
 
-Jsoup - idk
+## Add your dependencies!
+[![](https://jitpack.io/v/Cristian-Sknz/Ousu-Api.svg)](https://jitpack.io/#Cristian-Sknz/Ousu-Api)
+* Gradle
 
-[Gson-2.8.2](https://github.com/google/gson) - Google
+```groovy
+repositories {
+     maven { url 'https://jitpack.io' }
+}
 
-Utilizei somente essas duas dependencias.
+dependencies {
+     compile 'com.github.Cristian-Sknz:Ousu-Api:1.0.5'
+}
+```
+* Maven
+```xml
+<repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
+}
 
+<dependency>
+    <groupId>com.github.Cristian-Sknz</groupId>
+    <artifactId>Ousu-Api</artifactId>
+    <version>1.0.5</version>
+</dependency>
+}
+```
 ## Simple Use
 I made it pretty simple.
 
