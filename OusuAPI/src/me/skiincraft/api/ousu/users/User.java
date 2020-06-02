@@ -3,6 +3,7 @@ package me.skiincraft.api.ousu.users;
 import java.util.List;
 
 import me.skiincraft.api.ousu.exceptions.NoHistoryException;
+import me.skiincraft.api.ousu.modifiers.Gamemode;
 import me.skiincraft.api.ousu.modifiers.PlayedTime;
 import me.skiincraft.api.ousu.modifiers.ProfileEvents;
 import me.skiincraft.api.ousu.scores.Score;
@@ -21,6 +22,10 @@ public interface User {
 	@return Retorna a data do cadastro do Jogador em String.
 	*/
 	String getJoinDate();
+	/**
+	@return Retorna o gamemode do jogador.
+	*/
+	Gamemode getGamemode();
 	/**
 	@return Retorna o level do jogador.
 	*/

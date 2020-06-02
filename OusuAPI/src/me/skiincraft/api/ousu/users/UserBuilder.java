@@ -224,6 +224,11 @@ public class UserBuilder {
 			public String getUserFlag() {
 				return "https://osu.ppy.sh/images/flags/" + user.getCountry() + ".png";
 			}
+
+			@Override
+			public Gamemode getGamemode() {
+				return mode;
+			}
 		};
 		return us;
 	}
