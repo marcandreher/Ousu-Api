@@ -1,13 +1,9 @@
 package me.skiincraft.api.ousu.users;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.Gson;
@@ -181,13 +177,7 @@ public class UserBuilder {
 
 			@Override
 			public String getUserAvatar() {
-				try {
-					String url = "http://s.ppy.sh/a/" + user.getUser_id() + ".png";
-					ImageIO.read(new URL(url));
-					return url;
-				} catch (IOException e) {
-					return "https://i.imgur.com/tG1btnR.png";
-				}
+				return "http://s.ppy.sh/a/" + user.getUser_id() + ".png";
 			}
 
 			@Override
