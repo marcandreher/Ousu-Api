@@ -144,6 +144,10 @@ public class UserBuilder {
 					return evnlist;
 				}
 				for (Map<String, Object> evn : user.getEvents()) {
+					//Se for uma medalha ao inves de beatmap
+					if (evn.get("beatmap_id") == null) {
+						continue;
+					}
 					evnlist.add(new ProfileEvents(
 							String.valueOf(evn.get("display_html")), 
 							Integer.valueOf((String) evn.get("beatmap_id")), 
