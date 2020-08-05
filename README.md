@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-     compile 'com.github.Cristian-Sknz:Ousu-Api:1.0.5'
+     compile 'com.github.Cristian-Sknz:Ousu-Api:1.0.6'
 }
 ```
 * Maven
@@ -35,7 +35,7 @@ dependencies {
 <dependency>
     <groupId>com.github.Cristian-Sknz</groupId>
     <artifactId>Ousu-Api</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 </dependency>
 }
 ```
