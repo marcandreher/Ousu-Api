@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-     compile 'com.github.Cristian-Sknz:Ousu-Api:1.0.6'
+     compile 'com.github.Cristian-Sknz:Ousu-Api:2.0.0'
 }
 ```
 * Maven
@@ -35,7 +35,7 @@ dependencies {
 <dependency>
     <groupId>com.github.Cristian-Sknz</groupId>
     <artifactId>Ousu-Api</artifactId>
-    <version>1.0.6</version>
+    <version>2.0.0</version>
 </dependency>
 }
 ```
@@ -51,11 +51,19 @@ I made it pretty simple.
 		//Enter your Osu API token
 		api = new OusuAPI("API_KEY");
 		
+		// Requesting a player
+		Request<User> userRequest = api.getUser("skiincraft", Gamemode.Standard);
+		
+		// Always remember that a "Request <>" Class
+		// will always make a new request. 
+		// If the request has already been made, check using:
+		userRequest.isRequested(); // if requested it will return "true"
+		
 		//Getting information from a player.
-		User user = api.getUser("skiincraft", Gamemode.Standard);
+		User user = userRequest.get();
 		
 		//Print the information obtained
-		System.out.println("Username: " + user.getUserName());
+		System.out.println("Username: " + user.getUsername());
 		System.out.println("Ranking: #" + user.getRanking());
 		System.out.println("PP: " + user.getPP());
 	}
@@ -63,9 +71,12 @@ I made it pretty simple.
 In the case of beatmaps do
 ```java
 [....]
-		//Getting information from a beatmap.
-		Beatmap beatmap = api.getBeatmap(1018869);
-		    // List<Beatmap> beatmapset = api.getBeatmapSet(474376); in the case of beatmapset
+		// Requesting a beatmap
+		Request<Beatmap> beatmapRequest = api.getBeatmap(1018869); // beatmapId
+		
+		// Getting information from a beatmap.
+		Beatmap beatmap = beatmapRequest.get();
+		      // BeatmapSet beatmapset = api.getBeatmapSet(474376); in the case of beatmapset
 		
 		//Print the information obtained
 		System.out.println("Title: " + beatmap.getTitle());
