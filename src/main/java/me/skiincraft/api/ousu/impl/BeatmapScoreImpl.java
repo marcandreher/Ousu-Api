@@ -5,6 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import me.skiincraft.api.ousu.OusuAPI;
 import me.skiincraft.api.ousu.entity.score.BeatmapScore;
 import me.skiincraft.api.ousu.entity.score.Score;
 
@@ -14,6 +19,16 @@ public class BeatmapScoreImpl implements BeatmapScore {
 	
 	public BeatmapScoreImpl(List<Score> scores) {
 		this.scores = scores.toArray(new Score[scores.size()]);
+	}
+	
+	public BeatmapScoreImpl(JsonArray jsonScoreArray, long beatmapid, OusuAPI api) {
+		this.scores = new Score[jsonScoreArray.size()];
+		int i = 0;
+		for (JsonElement ele : jsonScoreArray) {
+			JsonObject object = ele.getAsJsonObject();
+			this.scores[i] = new ScoreImpl(object, beatmapid, api);
+			i++;
+		}
 	}
 	
 	public Iterator<Score> iterator() {

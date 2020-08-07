@@ -16,7 +16,21 @@ public interface Game {
 	long getGameId();
 	Date getGameStartTime();
 	Date getGameEndTime();
+	
+	/**<p>Get a beatmap by id</p>	 */
 	long getBeatmapId();
+	
+	/**<h1>Request<{@linkplain Beatmap}></h1>
+	 * <p>A beatmap request for this Game.
+	 * 
+	 * <br>If this beatmap is in a {@link Beatmap},
+	 *  you may not need to make another request</br></p>
+	 *  
+	 *  <p>Check if it is available using:
+	 *  <br><code>getBeatmap().wasRequested()</br></code></p>
+	 *  @see Request
+	 *  @see Beatmap
+	 */
 	Request<Beatmap> getBeatmap();
 	
 	Gamemode getGamemode();

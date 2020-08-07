@@ -53,7 +53,7 @@ public class BeatmapImpl implements Beatmap {
 		}
 		return new Request<BeatmapSet>() {
 
-			public boolean isRequested() {
+			public boolean wasRequested() {
 				return true;
 			}
 			
@@ -243,20 +243,6 @@ public class BeatmapImpl implements Beatmap {
 
 	public float getStars() {
 		return object.get("diff_rating").getAsFloat();
-	}
-
-	public String getStarsEmoji() {
-		String rating = String.valueOf(getStars());
-		int one = Integer.valueOf(rating.charAt(0));
-		int two = Integer.valueOf(rating.charAt(2));
-		
-		StringBuffer stars = new StringBuffer();
-		float floatStars = new Float(new DecimalFormat("#.0").format(getStars()).replace(",", "."));
-		for (int i = 0;i < one; i++) {
-			stars.append("★");
-		}
-		
-		return (two >= 5) ? "**" + stars.toString() + "✩** (" + floatStars + ")": "**" + stars.toString() + "** (" + floatStars + ")";
 	}
 
 	public String getURL() {

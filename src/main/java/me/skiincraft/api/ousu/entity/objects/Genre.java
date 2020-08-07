@@ -2,10 +2,27 @@ package me.skiincraft.api.ousu.entity.objects;
 
 import java.util.Arrays;
 
+/**<h1>Genre</h1>
+ * <p>The types of music of the Beatmaps</p>
+ * <p>There are 9 possible genres, including:
+ * <br>
+ * ANY(0),
+ * UNSPECIFIED(1),
+ * VIDEO_GAME(2),
+ * ANIME(3),
+ * ROCK(4),
+ * POP(5),
+ * OTHER(6),
+ * NOVELTY(7),
+ * HIP_HOP(9),
+ * ELECTRONIC(10);
+ * </br>
+ */
+
 public enum Genre {
 	
 	ANY(0, "Any"),
-	UNSPECIFIED(1, "Não especificado"),
+	UNSPECIFIED(1, "Unspecified"),
 	VIDEO_GAME(2, "Video Game"),
 	ANIME(3, "Anime"),
 	ROCK(4, "Rock"),

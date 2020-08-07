@@ -22,6 +22,9 @@ public class ReplayImpl implements Replay {
 	}
 	
 	public Request<Beatmap> getBeatmap() {
+		if (beatmapid == 0) {
+			return null;
+		}
 		return api.getBeatmap(beatmapid);
 	}
 

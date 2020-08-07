@@ -2,6 +2,20 @@ package me.skiincraft.api.ousu.entity.objects;
 
 import java.util.Arrays;
 
+/**<h1>Approval</h1>
+ * <p>Are the types of Beatmaps approvals.</p>
+ * <p> There are 8 possible approvals, including:
+ * <br>
+ *  UNSPECIFIED(-3)
+ *  Graveyard(-2)
+ *  WIP(-1)
+ *  Pending(0)
+ *  Ranked(1) 
+ *  Approved(2)
+ *  Qualified(3)
+ *  Loved(4)
+ * </br>
+ */
 public enum Approval {
 	
 	UNSPECIFIED(-3),Graveyard(-2), WIP(-1),Pending(0), Ranked(1), Approved(2), Qualified(3), Loved(4);

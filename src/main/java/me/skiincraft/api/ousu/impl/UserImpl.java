@@ -28,11 +28,13 @@ public class UserImpl implements User {
 		this.api = api;
 		this.mode = gamemode;
 	}
+
 	
 	@Override
 	public String getUsername() {
 		return object.get("username").getAsString();
 	}
+	
 	
 	@Override
 	public long getUserId() {
@@ -80,8 +82,8 @@ public class UserImpl implements User {
 	}
 	
 	@Override
-	public float getPpRaw() {
-		return object.get("pp_raw").getAsFloat();
+	public int getPP() {
+		return object.get("pp_raw").getAsInt();
 	}
 	
 	@Override
@@ -195,4 +197,5 @@ public class UserImpl implements User {
 	public Gamemode getGamemode() {
 		return mode;
 	}
+
 }

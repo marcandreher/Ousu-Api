@@ -22,7 +22,12 @@ import me.skiincraft.api.ousu.entity.score.BeatmapScore;
 import me.skiincraft.api.ousu.entity.score.RecentScore;
 import me.skiincraft.api.ousu.entity.score.Score;
 import me.skiincraft.api.ousu.entity.user.User;
-import me.skiincraft.api.ousu.exceptions.InvalidTokenException;
+import me.skiincraft.api.ousu.exceptions.BeatmapException;
+import me.skiincraft.api.ousu.exceptions.TokenException;
+import me.skiincraft.api.ousu.exceptions.MatchException;
+import me.skiincraft.api.ousu.exceptions.ReplayException;
+import me.skiincraft.api.ousu.exceptions.ScoreException;
+import me.skiincraft.api.ousu.exceptions.UserException;
 import me.skiincraft.api.ousu.impl.BeatmapImpl;
 import me.skiincraft.api.ousu.impl.BeatmapScoreImpl;
 import me.skiincraft.api.ousu.impl.BeatmapSetImpl;
@@ -31,36 +36,64 @@ import me.skiincraft.api.ousu.impl.RecentScoreImpl;
 import me.skiincraft.api.ousu.impl.ReplayImpl;
 import me.skiincraft.api.ousu.impl.ScoreImpl;
 import me.skiincraft.api.ousu.impl.UserImpl;
+import me.skiincraft.api.ousu.util.MakeList;
 
 public class OusuAPI {
 	
 	private String token;
+
+	public OusuAPI(String token, boolean testToken) {
+		this.setToken(token);
+
+		if (token == null || token == "") {
+			throw new TokenException("API Key is null, enter an API Key.", null);
+		}
+
+		if (token.length() < 36 || token.matches("-?\\d+(\\.\\d+)?") == true) {
+			throw new TokenException("Enter a valid API key. The key you entered is invalid.", null);
+		}
+
+		if (testToken) {
+			String body = HttpRequest.get("https://osu.ppy.sh/api/get_user?k=" + token).body();
+			checkHasValid(body);
+		}
+	}
+	
+	private void checkHasValid(String json) {
+		if (json.contains("Please provide a valid API key.")) {
+			throw new TokenException("Enter a valid API key. The key you entered is invalid.", null);
+		}
+	}
 	
 	public OusuAPI(String token) {
 		this.setToken(token);
-		
 		if (token == null || token == "") {
-				throw new InvalidTokenException("API Key esta nula, insira uma API Key.", null);
+			throw new TokenException("API Key is null, enter an API Key.", null);
 		}
 		
-		HttpRequest bc = HttpRequest.get("https://osu.ppy.sh/api/get_user?k=" + token);
-		bc.accept("application/json").contentType();
-		String body = bc.body();
-		
-		if (body.contains("Please provide a valid API key.")) {
-			try {
-				throw new InvalidTokenException("Insira uma API key valida.", null);
-			} catch (InvalidTokenException e) {
-				e.printStackTrace();
-				return;
-			}
+		if (token.length() < 36|| token.matches("-?\\d+(\\.\\d+)?") == true) {
+			throw new TokenException("Enter a valid API key. The key you entered is invalid.", null);
 		}
-	}
-
-	public static void main(String[] args) {
-		//Ignore this.
+		
+		String body = HttpRequest.get("https://osu.ppy.sh/api/get_user?k=" + token).body();
+		checkHasValid(body);
 	}
 	
+	/**<h1>Request<{@linkplain Beatmap}></h1>
+	 * <p>
+	 * Make a request for a Beatmap.
+	 * 
+	 * <br>The request is received in Json, and converted to a Class.</br>
+	 * <br>The information obtained is or can be limited.</br>
+	 * </p>
+	 *  
+	 *  <p>Read the Oficial Wiki at:
+	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
+	 *  
+	 *  @param id specify a beatmap_id to return metadata from.
+	 *  @see Request
+	 *  @see Beatmap
+	 */
 	public Request<Beatmap> getBeatmap(long id) {
 		final OusuAPI api = this;
 		return new Request<Beatmap>() {
@@ -69,19 +102,22 @@ public class OusuAPI {
 			private Beatmap beatmap;
 			private String json;
 			
-			public boolean isRequested() {
+			public boolean wasRequested() {
 				return beatmap != null;
 			}
 			
 			public Beatmap get() {
-				if (!isRequested()) {
+				if (!wasRequested()) {
 					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", Long.toString(id));
-					bc.accept("application/json").contentType();
-
-					json = bc.body();
+					json = String.valueOf(bc.body());
+					
+					checkHasValid(json);
 					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+					
+					if (array.size() == 0) {
+						throw new BeatmapException("This requested beatmap was not found. (jsonnull)", null);
+					}
 					beatmap = new BeatmapImpl(array.get(0).getAsJsonObject(), api);
-					return beatmap;
 				}
 				return beatmap;
 			}
@@ -91,12 +127,26 @@ public class OusuAPI {
 			}
 
 			public Beatmap getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return Beatmap.getSample();
 			}
 		};
 	}
 	
+	/**<h1>Request<{@linkplain BeatmapSet}></h1>
+	 * <p>
+	 * Make a request for a BeatmapSet.
+	 * 
+	 * <br>The request is received in Json, and converted to a Class.</br>
+	 * <br>The information obtained is or can be limited.</br>
+	 * </p>
+	 *  
+	 *  <p>Read the Oficial Wiki at:
+	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
+	 *  
+	 *  @param id specify a beatmapset_id to return metadata from.
+	 *  @see Request
+	 *  @see BeatmapSet
+	 */
 	public Request<BeatmapSet> getBeatmapSet(long id) {
 		final OusuAPI api = this;
 		return new Request<BeatmapSet>() {
@@ -104,19 +154,22 @@ public class OusuAPI {
 			private BeatmapSet beatmapSet;
 			private String json;
 			
-			public boolean isRequested() {
+			public boolean wasRequested() {
 				return beatmapSet != null;
 			}
 			
 			public BeatmapSet get() {
-				if (!isRequested()) {
+				if (!wasRequested()) {
 					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "s", Long.toString(id));
-					bc.accept("application/json").contentType();
-
-					json = bc.body();
+					
+					json = String.valueOf(bc.body());
+					
+					checkHasValid(json);
 					JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
-					beatmapSet = new BeatmapSetImpl(jsonArray, api);
-					return beatmapSet;
+					if (jsonArray.size() == 0) {
+						throw new BeatmapException("This requested beatmap was not found.", null);
+					}
+					return beatmapSet = new BeatmapSetImpl(jsonArray, api);
 				}
 				return beatmapSet;
 			}
@@ -126,41 +179,63 @@ public class OusuAPI {
 			}
 
 			public BeatmapSet getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return BeatmapSet.getSample();
 			}
 		};
 	}
 	
-	public Request<BeatmapScore> getBeatmapScore(int beatmapid, int limit) {
+	/**<h1>Request<{@linkplain BeatmapScore}></h1>
+	 * <p>
+	 * Make a request for a Beatmap Scoreboard.
+	 * 
+	 * <br>The request is received in Json, and converted to a Class.</br>
+	 * <br>The information obtained is or can be limited.</br>
+	 * </p>
+	 *  
+	 *  <p>Read the Oficial Wiki at:
+	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
+	 *  
+	 *  @param beatmapId specify a beatmap_id to return metadata from.
+	 *  @param limit Is the limit of responses you want to receive. <br>(range between 1 and 100 - defaults to 50).</br>
+	 *  
+	 *  @see Request
+	 *  @see BeatmapSet
+	 */
+	public Request<BeatmapScore> getBeatmapScore(int beatmapId, int limit) {
 		final OusuAPI api = this;
 		return new Request<BeatmapScore>() {
-			
 			private final String get = "https://osu.ppy.sh/api/get_scores";
 			private String json;
 			private BeatmapScore beatmapScore;
 
-			public boolean isRequested() {
+			public boolean wasRequested() {
 				return beatmapScore != null;
 			}
 			
 			public BeatmapScore get() {
-				if (!isRequested()) {
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapid + "", "limit",
+				if (!wasRequested()) {
+					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapId + "", "limit",
 							limit + "");
-					json = bc.body();
-
-					if (json.equalsIgnoreCase("[]")) {
-						return null;
+					json = String.valueOf(bc.body());
+					
+					checkHasValid(json);
+					JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
+					
+					if (jsonArray.size() == 0) {
+						throw new BeatmapException("This requested beatmap was not found.", null);
 					}
+					
+					beatmapScore = new BeatmapScoreImpl(new MakeList<Score>() {
 
-					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
-					List<Score> scores = new ArrayList<>();
-					for (JsonElement ele : array) {
-						JsonObject object = ele.getAsJsonObject();
-						scores.add(new ScoreImpl(object, beatmapid, api));
-					}
-					beatmapScore = new BeatmapScoreImpl(scores);
+						public List<Score> make() {
+							List<Score> scores = new ArrayList<>();
+							for (JsonElement ele : jsonArray) {
+								JsonObject object = ele.getAsJsonObject();
+								scores.add(new ScoreImpl(object, beatmapId, api));
+							}
+							return scores;
+						}
+					}.make());
 				}
 				return beatmapScore;
 			}
@@ -170,12 +245,28 @@ public class OusuAPI {
 			}
 
 			public BeatmapScore getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return BeatmapScore.getSample();
 			}
 		};
 	}
 	
+	/**<h1>Request<{@linkplain Score}></h1>
+	 * <p>
+	 * Request a score from a specific player.
+	 * 
+	 * <br>The request is received in Json, and converted to a Class.</br>
+	 * <br>The information obtained is or can be limited.</br>
+	 * </p>
+	 *  
+	 *  <p>Read the Oficial Wiki at:
+	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
+	 *  
+	 *  @param id specify a beatmapset_id to return metadata from.
+	 *  @param user specify a user_id or a username to return score information for.
+	 *  
+	 *  @see Request
+	 *  @see Score
+	 */
 	public Request<Score> getBeatmapScore(int beatmapid, String user) {
 		final OusuAPI api = this;
 		return new Request<Score>() {
@@ -184,20 +275,21 @@ public class OusuAPI {
 			private String json;
 			private Score score;
 
-			public boolean isRequested() {
+			public boolean wasRequested() {
 				return score != null;
 			}
 			
 			public Score get() {
-				if (!isRequested()) {
+				if (!wasRequested()) {
 					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapid+"", "u", user, "limit", "1");
-					json = bc.body();
+					json = String.valueOf(bc.body());
 					
-					if (json.equalsIgnoreCase("[]")) {
-						return null;
+					checkHasValid(json);
+					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+					
+					if (array.size() == 0) {
+						throw new ScoreException("The requested player's score could not be found on this beatmap or the beatmap is invalid.", null);
 					}
-					
-					JsonArray array = new JsonParser().parse(json).getAsJsonArray();	
 					score = new ScoreImpl(array.get(0).getAsJsonObject(), beatmapid, api);
 				}
 				
@@ -209,16 +301,31 @@ public class OusuAPI {
 			}
 
 			public Score getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return Score.getSample();
 			}
 		};
 	}
 	
-	public Request<List<Beatmap>> getBeatmapFromCreator(String username, int limit) {
+	/**<h1>Request<{@linkplain Beatmap}> </h1>
+	 * <p>
+	 * Make a request for maps created by a specific player.
+	 * 
+	 * <br>The request is received in Json, and converted to a Class.</br>
+	 * <br>The information obtained is or can be limited.</br>
+	 * </p>
+	 *  
+	 *  <p>Read the Oficial Wiki at:
+	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
+	 *  
+	 *  @param user specify a user_id or a username to return score information for.
+	 *  @param limit Is the limit of responses you want to receive. <br>(range between 1 and 100 - defaults to 50).</br>
+	 *  
+	 *  @see Request
+	 *  @see Beatmap
+	 */
+	public Request<List<Beatmap>> getBeatmapFromCreator(String user, int limit) {
 		final OusuAPI api = this;
 		return new Request<List<Beatmap>>() {
-			
 			private final String get = "https://osu.ppy.sh/api/get_beatmaps";
 			private String json;
 			private List<Beatmap> beatmaps;
@@ -228,35 +335,58 @@ public class OusuAPI {
 			}
 			
 			public List<Beatmap> getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return BeatmapSet.getSample().getAsList();
 			}
 			
-			public boolean isRequested() {
+			public boolean wasRequested() {
 				return this.beatmaps != null;
 			}
 			
 			public List<Beatmap> get() {
-				if (!isRequested()) {
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", username, "limit",
+				if (!wasRequested()) {
+					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", user, "limit",
 							(limit == 0) ? 500 : limit + "");
-					bc.accept("application/json").contentType();
-					json = bc.body();
+					json = String.valueOf(bc.body());
+					
+					checkHasValid(json);
 					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
-
-					List<Beatmap> beatmaps = new ArrayList<>();
-					for (JsonElement ele : array) {
-						JsonObject object = ele.getAsJsonObject();
-						Beatmap beatmap = new BeatmapImpl(object, api);
-						beatmaps.add(beatmap);
+					if (array.size() == 0) {
+						throw new BeatmapException("It was not possible to find beatmaps created by this player or the player does not exist.", null);
 					}
-					this.beatmaps = beatmaps;
+					
+					this.beatmaps = new MakeList<Beatmap>() {
+
+						public List<Beatmap> make() {
+							List<Beatmap> beatmaps = new ArrayList<Beatmap>();
+							for (JsonElement ele : array) {
+								JsonObject object = ele.getAsJsonObject();
+								beatmaps.add(new BeatmapImpl(object, api));
+							}
+							return beatmaps;
+						}
+					}.make();
 				}
 				return beatmaps;
 			}
 		};
 	}
 	
+	/**<h1>Request<{@linkplain Beatmap}> </h1>
+	 * <p>
+	 * Make a request for available maps on a specific date.
+	 * 
+	 * <br>The request is received in Json, and converted to a Class.</br>
+	 * <br>The information obtained is or can be limited.</br>
+	 * </p>
+	 *  
+	 *  <p>Read the Oficial Wiki at:
+	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
+	 *  
+	 *  @param date return all beatmaps ranked or loved since this date. Must be a MySQL date. In UTC
+
+	 *  @see Request
+	 *  @see Beatmap
+	 */
 	public Request<List<Beatmap>> getBeatmapSince(Date date) {
 		final OusuAPI api = this;
 		return new Request<List<Beatmap>>() {
@@ -271,31 +401,56 @@ public class OusuAPI {
 			}
 			
 			public List<Beatmap> getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return BeatmapSet.getSample().getAsList();
 			}
 			
 			public List<Beatmap> get() {
-				if (!isRequested()) {
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "since", sdf.format(date));
-					bc.accept("application/json").contentType();
-
-					json = bc.body();
+				if (!wasRequested()) {
+					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "since", new SimpleDateFormat("yyyy-MM-dd").format(date));
+					json = String.valueOf(bc.body());
+					
+					checkHasValid(json);
 					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
-					List<Beatmap> beatmaps = new ArrayList<Beatmap>();
-					for (JsonElement ele : array) {
-						JsonObject object = ele.getAsJsonObject();
-						beatmaps.add(new BeatmapImpl(object, api));
+					if (array.size() == 0) {
+						throw new BeatmapException("It was not possible to find beatmaps for the requested date.", null);
 					}
-					this.beatmaps = beatmaps;
+					
+					this.beatmaps = new MakeList<Beatmap>() {
+
+						public List<Beatmap> make() {
+							List<Beatmap> beatmaps = new ArrayList<Beatmap>();
+							for (JsonElement ele : array) {
+								JsonObject object = ele.getAsJsonObject();
+								beatmaps.add(new BeatmapImpl(object, api));
+							}
+							return beatmaps;
+						}
+					}.make();
 				}
 				return beatmaps;
 			}
 		};
 	}
 	
-	public Request<List<RecentScore>> getRecentUser(String user, Gamemode mode, int limit) {
+	/**<h1>Request<{@linkplain RecentScore}> </h1>
+	 * <p>
+	 * Make a request for recent scores by a specific player.
+	 * 
+	 * <br>The request is received in Json, and converted to a Class.</br>
+	 * <br>The information obtained is or can be limited.</br>
+	 * </p>
+	 *  
+	 *  <p>Read the Oficial Wiki at:
+	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
+	 *  
+	 *  @param user Specify a user_id or a username to return recent plays from.
+	 *  @param gamemode Is the gamemode (Standard, Taiko, Catch the beat, Mania). default value is Standard.
+	 *  @param limit Is the limit of responses you want to receive.<br>Range between 1 and 50 - the default is 10</br>.
+	 *  
+	 *  @see Request
+	 *  @see RecentScore
+	 */
+	public Request<List<RecentScore>> getRecentUser(String user, Gamemode gamemode, int limit) {
 		final OusuAPI api = this;
 		return new Request<List<RecentScore>>() {
 			
@@ -303,7 +458,7 @@ public class OusuAPI {
 			private String json;
 			private List<RecentScore> scores;
 			
-			public boolean isRequested() {
+			public boolean wasRequested() {
 				return scores != null;
 			}
 			
@@ -312,29 +467,56 @@ public class OusuAPI {
 			}
 			
 			public List<RecentScore> getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return RecentScore.getSampleCollection();
 			}
 			
 			public List<RecentScore> get() {
-				if (!isRequested()) {
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", user, "m", mode.getId()+"","limit", limit+"");
-					bc.accept("application/json").contentType();
+				if (!wasRequested()) {
+					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", user, "m", gamemode.getId()+"","limit", limit+"");
 					
 					json = bc.body();
+					
+					checkHasValid(json);
 					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
-					List<RecentScore> scores = new ArrayList<>();
-					for (JsonElement jsonElement : array) {
-						JsonObject object = jsonElement.getAsJsonObject();
-						scores.add(new RecentScoreImpl(object, api));
+					if (array.size() == 0) {
+						throw new ScoreException("It was not possible to find recent maps of the requested player, or the requested player did not exist.", null);
 					}
-					this.scores = scores;
+					
+					this.scores = new MakeList<RecentScore>() {
+
+						public List<RecentScore> make() {
+							List<RecentScore> scores = new ArrayList<>();
+							for (JsonElement jsonElement : array) {
+								JsonObject object = jsonElement.getAsJsonObject();
+								scores.add(new RecentScoreImpl(object, api));
+							}
+							return scores;
+						}
+					}.make();
 				}
 				return scores;
 			}
 		};
 	}
 	
+	/**<h1>Request<{@linkplain Score}> </h1>
+	 * <p>
+	 * Make a request a specific player.
+	 * 
+	 * <br>The request is received in Json, and converted to a Class.</br>
+	 * <br>The information obtained is or can be limited.</br>
+	 * </p>
+	 *  
+	 *  <p>Read the Oficial Wiki at:
+	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
+	 *  
+	 *  @param user Specify a user_id or a username to return top plays from.
+	 *  @param gamemode Is the gamemode (Standard, Taiko, Catch the beat, Mania). default value is Standard.
+	 *  @param limit Is the limit of responses you want to receive.<br>Range between 1 and 50 - the default is 10</br>.
+	 *  
+	 *  @see Request
+	 *  @see RecentScore
+	 */
 	public Request<List<Score>> getTopUser(String user, Gamemode mode, int limit) {
 		
 		final OusuAPI api = this;
@@ -344,7 +526,7 @@ public class OusuAPI {
 			private String json;
 			private List<Score> scores;
 			
-			public boolean isRequested() {
+			public boolean wasRequested() {
 				return scores != null;
 			}
 			
@@ -353,17 +535,22 @@ public class OusuAPI {
 			}
 			
 			public List<Score> getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return Score.getSampleTop();
 			}
 			
 			public List<Score> get() {
-				if (!isRequested()) {
+				if (!wasRequested()) {
 					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", user, "limit", limit+"", "m", mode.getId()+"");
 					bc.accept("application/json").contentType();
 					
 					json = bc.body();
+					
+					checkHasValid(json);
 					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+					
+					if (array.size() == 0) {
+						throw new ScoreException("It was not possible to find top maps of the requested player, or the requested player did not exist.", null);
+					}
 					List<Score> scores = new ArrayList<>();
 					for (JsonElement jsonElement : array) {
 						JsonObject object = jsonElement.getAsJsonObject();
@@ -376,11 +563,29 @@ public class OusuAPI {
 		};
 	}
 	
+	
 	public Request<User> getUser(long userId, Gamemode mode) {
 		return getUser(String.valueOf(userId), mode);
 	}
 	
-	public Request<User> getUser(String username, Gamemode mode) {
+	/**<h1>Request<{@linkplain User}> </h1>
+	 * <p>
+	 * Make a request a specific player.
+	 * 
+	 * <br>The request is received in Json, and converted to a Class.</br>
+	 * <br>The information obtained is or can be limited.</br>
+	 * </p>
+	 *  
+	 *  <p>Read the Oficial Wiki at:
+	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
+	 *  
+	 *  @param user Specify a user_id or a username to return recent plays from.
+	 *  @param gamemode Is the gamemode (Standard, Taiko, Catch the beat, Mania). default value is Standard.
+	 *  
+	 *  @see Request
+	 *  @see RecentScore
+	 */
+	public Request<User> getUser(String username, Gamemode gamemode) {
 		final OusuAPI api = this;
 		return new Request<User>() {
 			
@@ -388,7 +593,7 @@ public class OusuAPI {
 			private String json;
 			private User user;
 			
-			public boolean isRequested() {
+			public boolean wasRequested() {
 				return user != null;
 			}
 			public void getWithJson(BiConsumer<User, String> biConsumer) {
@@ -396,27 +601,44 @@ public class OusuAPI {
 			}
 			
 			public User getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return User.getSample();
 			}
 			
 			public User get() {
-				if (!isRequested()) {
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", username, "m", mode.getId()+"");
-					bc.accept("application/json").contentType();
-					json = bc.body();
-					JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
+				if (!wasRequested()) {
+					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", username, "m", gamemode.getId()+"");
+					json = String.valueOf(bc.body());
 					
+					checkHasValid(json);
+					JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
 					if (jsonArray.size() == 0) {
-						return null;
+						throw new UserException("This requested user was not found.", null);
 					}
-					user = new UserImpl(jsonArray.get(0).getAsJsonObject(), mode, api);
+					user = new UserImpl(jsonArray.get(0).getAsJsonObject(), gamemode, api);
 				}
 				return user;
 			}
 		};
 	}
 	
+	
+	/**<h1>Request<{@linkplain Replay}> </h1>
+	 * <p>
+	 * Make a request for replay by a specific player and beatmap.
+	 * 
+	 * <br>The request is received in Json, and converted to a Class.</br>
+	 * <br>The information obtained is or can be limited.</br>
+	 * </p>
+	 *  
+	 *  <p>Read the Oficial Wiki at:
+	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
+	 *  
+	 *  @param user the user that has played the beatmap
+	 *  @param beatmapid the beatmap ID (not beatmap set ID!) in which the replay was played
+	 *  
+	 *  @see Request
+	 *  @see RecentScore
+	 */
 	public Request<Replay> getReplay(String user, int beatmapid) {
 		final OusuAPI api = this;
 		return new Request<Replay>() {
@@ -426,7 +648,7 @@ public class OusuAPI {
 			private String json;
 			
 			
-			public boolean isRequested() {
+			public boolean wasRequested() {
 				return replay != null;
 			}
 			
@@ -435,16 +657,19 @@ public class OusuAPI {
 			}
 			
 			public Replay getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return Replay.getSample();
 			}
 			
 			public Replay get() {
-				if (!isRequested()) {
+				if (!wasRequested()) {
 					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapid+"", "u", user);
-					bc.accept("application/json").contentType();
 					json = bc.body();
+					
+					checkHasValid(json);
 					JsonObject object = new JsonParser().parse(json).getAsJsonObject();
+					if (object.size() == 0) {
+						new ReplayException("It was not possible to find the replay of this user, or beatmap/user does not exist.", null);
+					}
 					
 					replay = new ReplayImpl(object, beatmapid, api);
 				}
@@ -453,6 +678,22 @@ public class OusuAPI {
 		};
 	}
 	
+	/**<h1>Request<{@linkplain Match}> </h1>
+	 * <p>
+	 * Make a request for match by match_Id.
+	 * 
+	 * <br>The request is received in Json, and converted to a Class.</br>
+	 * <br>The information obtained is or can be limited.</br>
+	 * </p>
+	 *  
+	 *  <p>Read the Oficial Wiki at:
+	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
+	 *  
+	 *  @param matchId for match information
+	 *  
+	 *  @see Request
+	 *  @see RecentScore
+	 */
 	public Request<Match> getMatch(long matchId){
 		final OusuAPI api = this;
 		return new Request<Match>() {
@@ -460,7 +701,7 @@ public class OusuAPI {
 			private Match match;
 			private String json;
 			
-			public boolean isRequested() {
+			public boolean wasRequested() {
 				return match != null;
 			}
 			
@@ -469,16 +710,20 @@ public class OusuAPI {
 			}
 			
 			public Match getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return Match.getSample();
 			}
 			
 			public Match get() {
-				if (!isRequested()) {
+				if (!wasRequested()) {
 					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "mp", matchId);
-					bc.accept("application/json").contentType();
 					json = bc.body();
+					
+					checkHasValid(json);
 					JsonObject object = new JsonParser().parse(json).getAsJsonObject();
+					
+					if (object.size() == 0 || object.get("match").getAsLong() == 0) {
+						throw new MatchException("The requested match was not found.", null);
+					}
 					
 					match = new MatchImpl(object, api);
 				}

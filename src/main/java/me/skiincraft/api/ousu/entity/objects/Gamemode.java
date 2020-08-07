@@ -4,6 +4,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**<h1>Gamemode</h1>
+ * <p>These are Osu! game modes.</p>
+ * <p>The Osu game has 4 Game modes:
+ * <br>
+ * Standard(0),
+ * Taiko(1),
+ * Catch(2),
+ * Mania(3);
+ * </br>
+ */
 public enum Gamemode {
 	
 	Standard(0, "Osu!"), Taiko(1, "Osu!Taiko"), Catch(2, "Osu!Ctb"), Mania(3, "Osu!Mania");
@@ -56,7 +67,4 @@ public enum Gamemode {
 	public static Gamemode getById(int id) {
 		return Arrays.stream(values()).filter(g -> g.id == id).findFirst().orElse(null);
 	}
-	
-	
-
 }

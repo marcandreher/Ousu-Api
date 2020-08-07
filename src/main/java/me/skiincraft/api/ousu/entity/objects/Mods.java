@@ -6,6 +6,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**<h1>Mods</h1>
+ * <p>It is the Mods (Modifiers) that can vary the difficulties of Gameplay</p>
+ * <p>There are 31 variations of Mods</p>
+ */
 public enum Mods {
 
 	NO_FAIL(1, "No Fail", "NF"),
