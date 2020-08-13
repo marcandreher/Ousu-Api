@@ -37,6 +37,7 @@ public interface Game {
 	Scoring getScoreType();
 	Team getTeamType();
 	Mods[] getGlobalMods();
+	
 	List<MultiplayerScore> getScores();	
 	
 

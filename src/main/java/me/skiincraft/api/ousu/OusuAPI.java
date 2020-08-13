@@ -91,6 +91,7 @@ public class OusuAPI {
 	 *  <br>{@link https://github.com/ppy/osu-api/wiki}</br></p>
 	 *  
 	 *  @param id specify a beatmap_id to return metadata from.
+	 *  
 	 *  @see Request
 	 *  @see Beatmap
 	 */
@@ -331,7 +332,7 @@ public class OusuAPI {
 			private List<Beatmap> beatmaps;
 			
 			public void getWithJson(BiConsumer<List<Beatmap>, String> biConsumer) {
-				biConsumer.accept(get(), token);
+				biConsumer.accept(get(), json);
 			}
 			
 			public List<Beatmap> getSample() {

@@ -101,5 +101,7 @@ public class GameImpl implements Game {
 		return getDate("end_time");
 	}
 	
-	
+	public String toString() {
+		return "[gameId=" + getGameId() + ", beatmapId=" + getBeatmapId()+ ", gamemode=" + getGamemode() + "]";
+	}
 }

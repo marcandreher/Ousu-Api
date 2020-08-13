@@ -262,4 +262,12 @@ public class BeatmapImpl implements Beatmap {
 		return conn.getInputStream();
 	}
 
+	public String toString() {
+		return "BeatmapImpl [getBeatmapId()="
+				+ getBeatmapId() + ", getTitle()=" + getTitle() + ", getVersion()=" + getVersion() + ", getURL()="
+				+ getURL() + "]";
+	}
+	
+	
+
 }

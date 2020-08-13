@@ -72,5 +72,9 @@ public class MatchImpl implements Match{
 		
 		return games;
 	}
+	
+	public String toString() {
+		return "[name=" + getName() +", matchId=" + getMatchId()+ ", games=" + getGames()+ "]";
+	}
 
 }
