@@ -116,7 +116,7 @@ public interface User {
 	/**<p> Is the Performance Point of this user</p>
 	 * <p>For inactive players this will be 0 to purge them from leaderboards</p>
 	 */
-	int getPP(); 
+	float getPP(); 
 	
 	default Request<List<Score>> getTopScore(int limit){
 		return getTopScore(getGamemode(), limit);

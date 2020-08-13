@@ -82,8 +82,8 @@ public class UserImpl implements User {
 	}
 	
 	@Override
-	public int getPP() {
-		return object.get("pp_raw").getAsInt();
+	public float getPP() {
+		return object.get("pp_raw").getAsFloat();
 	}
 	
 	@Override
@@ -198,4 +198,9 @@ public class UserImpl implements User {
 		return mode;
 	}
 
+	@Override
+	public String toString() {
+		return "[username=" + getUsername()+ ", userId=" + getUserId() + "]";
+	}
+	
 }
