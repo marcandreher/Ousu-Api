@@ -260,18 +260,21 @@ public interface Beatmap {
 	 * <p>Is the stars (difficult) of this beatmap with emojis.</p>
 	 */
 	default String getStarsEmoji() {
-		String rating = String.valueOf(getStars());
-		int one = Integer.valueOf(rating.charAt(0));
-		int two = Integer.valueOf(rating.charAt(2));
-
-		StringBuffer stars = new StringBuffer();
-		float floatStars = new Float(new DecimalFormat("#.0").format(getStars()).replace(",", "."));
+		String dif = String.valueOf(getStars());
+		int one = Integer.valueOf(String.valueOf(dif.charAt(0)));
+		int two = Integer.valueOf(String.valueOf(dif.charAt(2)));
+		
+		StringBuffer fstars = new StringBuffer();
+		float stars = new Float(new DecimalFormat("#.0").format(getStars()).replace(",", "."));  
+				
 		for (int i = 0; i < one; i++) {
-			stars.append("★");
+			fstars.append("★");
 		}
-
-		return (two >= 5) ? "**" + stars.toString() + "✩** (" + floatStars + ")"
-				: "**" + stars.toString() + "** (" + floatStars + ")";
+		if (two >= 5) {
+			return "**" + fstars.toString() + "✩** (" + stars + ")";
+		} else {
+			return "**" + fstars.toString() + "** (" + stars + ")";
+		}
 	}
 	
 	/**
