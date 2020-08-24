@@ -47,6 +47,10 @@ public class BeatmapImpl implements Beatmap {
 		return null;
 	}
 	
+	boolean isNull(String str) {
+		return object.get(str).isJsonNull();
+	}
+	
 	public Request<BeatmapSet> getBeatmapSet() {
 		if (beatmapset == null) {
 			return api.getBeatmapSet(getBeatmapSetId());
@@ -66,8 +70,7 @@ public class BeatmapImpl implements Beatmap {
 			}
 
 			public BeatmapSet getSample() {
-				// TODO Auto-generated method stub
-				return null;
+				return BeatmapSet.getSample();
 			}
 		};
 	}
@@ -101,27 +104,27 @@ public class BeatmapImpl implements Beatmap {
 	}
 
 	public float getDifficultSize() {
-		return object.get("diff_size").getAsFloat();
+		return isNull("diff_size") ? 0 :  object.get("diff_size").getAsFloat();
 	}
 
 	public float getDifficultOverall() {
-		return object.get("diff_overall").getAsFloat();
+		return isNull("diff_overall") ? 0 : object.get("diff_overall").getAsFloat();
 	}
 
 	public float getDifficultApproach() {
-		return object.get("diff_approach").getAsFloat();
+		return isNull("diff_approach") ? 0 : object.get("diff_approach").getAsFloat();
 	}
 
 	public float getDifficultDrain() {
-		return object.get("diff_drain").getAsFloat();
+		return isNull("diff_drain") ? 0 : object.get("diff_drain").getAsFloat();
 	}
 
 	public float getDifficultSpeed() {
-		return object.get("diff_speed").getAsFloat();
+		return isNull("diff_speed") ? 0 : object.get("diff_speed").getAsFloat();
 	}
 
 	public float getDifficultAim() {
-		return object.get("diff_aim").getAsFloat();
+		return isNull("diff_aim") ? 0 : object.get("diff_aim").getAsFloat();
 	}
 
 	public Gamemode getGameMode() {
@@ -238,7 +241,7 @@ public class BeatmapImpl implements Beatmap {
 	}
 
 	public int getMaxCombo() {
-		return object.get("max_combo").getAsInt();
+		return isNull("max_combo") ? 0 : object.get("max_combo").getAsInt();
 	}
 
 	public float getStars() {
