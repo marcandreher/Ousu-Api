@@ -242,7 +242,7 @@ public class BeatmapImpl implements Beatmap {
 	}
 
 	public float getStars() {
-		return object.get("diff_rating").getAsFloat();
+		return object.get("difficultyrating").getAsFloat();
 	}
 
 	public String getURL() {
