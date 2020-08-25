@@ -160,7 +160,7 @@ public class BeatmapImpl implements Beatmap {
 	}
 
 	public String getArtistUnicode() {
-		return object.get("artist_unicode").getAsString();
+		return isNull("title_unicode")? null : object.get("artist_unicode").getAsString();
 	}
 
 	public String getTitle() {
@@ -168,7 +168,7 @@ public class BeatmapImpl implements Beatmap {
 	}
 
 	public String getTitleUnicode() {
-		return object.get("title_unicode").getAsString();
+		return isNull("title_unicode")? null : object.get("title_unicode").getAsString();
 	}
 
 	public Request<User> getCreator(Gamemode mode) {
