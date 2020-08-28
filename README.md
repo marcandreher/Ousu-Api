@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-     compile 'com.github.Cristian-Sknz:Ousu-Api:2.0.0'
+     compile 'com.github.Cristian-Sknz:Ousu-Api:v2.0.1.1'
 }
 ```
 * Maven
@@ -35,7 +35,7 @@ dependencies {
 <dependency>
     <groupId>com.github.Cristian-Sknz</groupId>
     <artifactId>Ousu-Api</artifactId>
-    <version>2.0.0</version>
+    <version>c</version>
 </dependency>
 }
 ```
@@ -57,7 +57,7 @@ I made it pretty simple.
 		// Always remember that a "Request <>" Class
 		// will always make a new request. 
 		// If the request has already been made, check using:
-		userRequest.isRequested(); // if requested it will return "true"
+		userRequest.wasRequested(); // if requested it will return "true"
 		
 		//Getting information from a player.
 		User user = userRequest.get();
@@ -76,7 +76,7 @@ In the case of beatmaps do
 		
 		// Getting information from a beatmap.
 		Beatmap beatmap = beatmapRequest.get();
-		      // BeatmapSet beatmapset = api.getBeatmapSet(474376); in the case of beatmapset
+		      // BeatmapSet beatmapset = api.getBeatmapSet(474376).get(); in the case of beatmapset
 		
 		//Print the information obtained
 		System.out.println("Title: " + beatmap.getTitle());
