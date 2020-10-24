@@ -3,7 +3,7 @@ package me.skiincraft.api.ousu.entity.beatmap;
 import java.util.List;
 import java.util.stream.Stream;
 
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.impl.BeatmapSetImpl;
 import me.skiincraft.api.ousu.json.SimpleJson;
 
@@ -40,7 +40,7 @@ public interface BeatmapSet extends Iterable<Beatmap> {
 	 * <p>This example was taken directly from the official Osu! </p>
 	 * <p>This example will not make any Request</p>
 	 */
-	public static BeatmapSet getSample() {
+	static BeatmapSet getSample() {
 		return new BeatmapSetImpl(new SimpleJson().getJsonAsResource("beatmapsetJson.json"), null);
 	}
 }

@@ -18,7 +18,7 @@ public class BeatmapSetImpl implements BeatmapSet {
 	private Beatmap[] beatmaps;
 	
 	public BeatmapSetImpl(List<Beatmap> beatmaps) {
-		this.beatmaps = beatmaps.toArray(new Beatmap[beatmaps.size()]);
+		this.beatmaps = beatmaps.toArray(new Beatmap[0]);
 	}
 	
 	public BeatmapSetImpl(JsonArray beatmapsArray, OusuAPI api) {
@@ -29,6 +29,7 @@ public class BeatmapSetImpl implements BeatmapSet {
 			beatmaps[i] = new BeatmapImpl(obj, this, api);
 			i++;
 		}
+		Arrays.sort(beatmaps, (a1, a2) -> Float.compare(a1.getStars(), a2.getStars()));
 	}
 	
 	public Iterator<Beatmap> iterator() {
@@ -40,11 +41,11 @@ public class BeatmapSetImpl implements BeatmapSet {
 	}
 
 	public Stream<Beatmap> getAsStream() {
-		return Arrays.asList(beatmaps).stream();
+		return Arrays.stream(beatmaps);
 	}
 
 	public Beatmap getBeatmapById(long beatmapid) {
-		return Arrays.asList(beatmaps).stream().filter(b -> b.getBeatmapId() == beatmapid).findFirst().orElse(null);
+		return Arrays.stream(beatmaps).filter(b -> b.getBeatmapId() == beatmapid).findFirst().orElse(null);
 	}
 
 	public int size() {

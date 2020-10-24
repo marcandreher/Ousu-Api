@@ -1,9 +1,9 @@
 package me.skiincraft.api.ousu.entity.multiplayer;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.impl.MatchImpl;
 import me.skiincraft.api.ousu.json.SimpleJson;
 
@@ -17,12 +17,12 @@ public interface Match {
 	
 	long getMatchId();
 	String getName();
-	Date getStartTime();
-	Date getEndTime();
+	OffsetDateTime getStartTime();
+	OffsetDateTime getEndTime();
 	
 	List<Game> getGames();
 
-	public static Match getSample() {
+	static Match getSample() {
 		return new MatchImpl(new SimpleJson().getJsonObjectAsResource("matchJson.json"), null);
 	}
 }

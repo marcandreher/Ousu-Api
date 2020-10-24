@@ -3,7 +3,7 @@ package me.skiincraft.api.ousu.entity.score;
 import java.util.List;
 import java.util.stream.Stream;
 
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.impl.BeatmapScoreImpl;
 import me.skiincraft.api.ousu.json.SimpleJson;
 
@@ -41,7 +41,7 @@ public interface BeatmapScore extends Iterable<Score> {
 	/**<h1>Get a Sample</h1>
 	 * <p>This example will not make any Request</p>
 	 */
-	public static BeatmapScore getSample() {
+	static BeatmapScore getSample() {
 		return new BeatmapScoreImpl(new SimpleJson().getJsonAsResource("beatmapScoreJson.json"), 1065901, null);
 		// The beatmap :3 https://osu.ppy.sh/beatmapsets/488396#osu - Emilia-tan
 	}

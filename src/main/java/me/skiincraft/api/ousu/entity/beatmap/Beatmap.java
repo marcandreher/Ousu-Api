@@ -5,9 +5,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.objects.Approval;
 import me.skiincraft.api.ousu.entity.objects.Gamemode;
 import me.skiincraft.api.ousu.entity.objects.Genre;
@@ -105,17 +105,17 @@ public interface Beatmap {
 	/**<h1>Publish Date</h1>
 	 * <p> is the date the map was published on the Osu!</p>
 	 */
-	Date getPublishDate();
+	OffsetDateTime getPublishDate();
 	
 	/**<h1>Approved Date</h1>
 	 * <p> is the date the map was approved on the Osu!</p>
 	 */
-	Date getApprovedDate();
+	OffsetDateTime getApprovedDate();
 	
 	/**<h1>Approved Date</h1>
 	 * <p> is the date of the last update on the beatmap.</p>
 	 */
-	Date getLastUpdateDate();
+	OffsetDateTime getLastUpdateDate();
 	
 	/**
 	 * <p>The Artist of this beatmap</p>
@@ -145,7 +145,7 @@ public interface Beatmap {
 	 *  <p>Check if it is available using:
 	 *  <br><code>getCreator().isRequested()</br></code></p>
 	 *  
-	 *  @param gamemode
+	 *  @param gamemode is the gamemode
 	 *  @see Request
 	 */
 	Request<User> getCreator(Gamemode gamemode);
@@ -261,10 +261,10 @@ public interface Beatmap {
 	 */
 	default String getStarsEmoji() {
 		String dif = String.valueOf(getStars());
-		int one = Integer.valueOf(String.valueOf(dif.charAt(0)));
-		int two = Integer.valueOf(String.valueOf(dif.charAt(2)));
+		int one = Integer.parseInt(String.valueOf(dif.charAt(0)));
+		int two = Integer.parseInt(String.valueOf(dif.charAt(2)));
 		
-		StringBuffer fstars = new StringBuffer();
+		StringBuilder fstars = new StringBuilder();
 		float stars = new Float(new DecimalFormat("#.0").format(getStars()).replace(",", "."));  
 				
 		for (int i = 0; i < one; i++) {
@@ -309,7 +309,7 @@ public interface Beatmap {
 	 * <p>This example was taken directly from the official Osu! </p>
 	 * <p>This example will not make any Request</p>
 	 */
-	public static Beatmap getSample() {
+	static Beatmap getSample() {
 		return new BeatmapImpl(new SimpleJson().getJsonAsResource("beatmapJson.json").get(0).getAsJsonObject(), null);
 	}
 }

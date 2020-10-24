@@ -1,6 +1,6 @@
 package me.skiincraft.api.ousu.entity.replay;
 
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.beatmap.Beatmap;
 import me.skiincraft.api.ousu.impl.ReplayImpl;
 import me.skiincraft.api.ousu.json.SimpleJson;
@@ -39,7 +39,7 @@ public interface Replay {
 	 * <h3>From original documentation:</h3>
 	 * <p>Note that the binary data you get when you decode above base64-string, is not the contents of an .osr-file.
 	 * <br>It is the LZMA stream referred to by the osu-wiki here:</br></p>
-	 * <p>The remaining data contains information about mouse movement and key presses in an wikipedia:<br>LZMA stream ({@link https://osu.ppy.sh/help/wiki/osu!_File_Formats/Osr_(file_format)})<br></p>
+	 * <p>The remaining data contains information about mouse movement and key presses in an wikipedia:<br>LZMA stream (https://osu.ppy.sh/help/wiki/osu!_File_Formats/Osr_(file_format)})<br></p>
 	 */
 	String getBase64String();
 	
@@ -49,7 +49,7 @@ public interface Replay {
 	 */
 	byte[] getDecode();
 	
-	public static Replay getSample() {
+	static Replay getSample() {
 		return new ReplayImpl(new SimpleJson().getJsonObjectAsResource("replayJson.json"), 0, null);
 	}
 }

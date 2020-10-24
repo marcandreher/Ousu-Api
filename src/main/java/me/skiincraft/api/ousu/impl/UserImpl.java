@@ -1,6 +1,10 @@
 package me.skiincraft.api.ousu.impl;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import me.skiincraft.api.ousu.OusuAPI;
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.objects.Gamemode;
 import me.skiincraft.api.ousu.entity.objects.PlayedTime;
 import me.skiincraft.api.ousu.entity.objects.ProfileEvents;
@@ -19,9 +23,9 @@ import me.skiincraft.api.ousu.entity.user.User;
 
 public class UserImpl implements User {
 
-	private JsonObject object;
-	private OusuAPI api;
-	private Gamemode mode;
+	private final JsonObject object;
+	private final OusuAPI api;
+	private final Gamemode mode;
 	
 	public UserImpl(JsonObject object, Gamemode gamemode,OusuAPI api) {
 		this.object = object;
@@ -95,15 +99,23 @@ public class UserImpl implements User {
 	public float getLevel() {
 		return object.get("level").getAsFloat();
 	}
-	
+
+	private OffsetDateTime getDate() {
+		if (object.get("join_date").isJsonNull()){
+			return null;
+		}
+		LocalDateTime time = LocalDateTime.parse(object.get("join_date").getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		return OffsetDateTime.of(time, ZoneOffset.UTC);
+	}
+
 	@Override
-	public String getJoinDate() {
-		return object.get("join_date").getAsString();
+	public OffsetDateTime getJoinDate() {
+		return getDate();
 	}
 	
 	@Override
 	public List<ProfileEvents> getProfileEvents() {
-		List<ProfileEvents> evnlist = new ArrayList<ProfileEvents>();
+		List<ProfileEvents> evnlist = new ArrayList<>();
 		if (object.get("events").toString().contains("[]")) {
 			return evnlist;
 		}

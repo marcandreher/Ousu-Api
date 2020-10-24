@@ -1,13 +1,14 @@
 package me.skiincraft.api.ousu.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 import com.google.gson.JsonObject;
 
 import me.skiincraft.api.ousu.OusuAPI;
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.objects.Gamemode;
 import me.skiincraft.api.ousu.entity.objects.Mods;
 import me.skiincraft.api.ousu.entity.score.RecentScore;
@@ -74,13 +75,12 @@ public class RecentScoreImpl implements RecentScore {
 		return api.getUser(getUserId()+"", gamemode);
 	}
 
-	public Date getDate() {
-		try {
-			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(object.get("date").getAsString());
-		} catch (ParseException e) {
-			e.printStackTrace();
+	public OffsetDateTime getDate() {
+		if (object.get("date").isJsonNull()){
+			return null;
 		}
-		return null;
+		LocalDateTime time = LocalDateTime.parse(object.get("date").getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		return OffsetDateTime.of(time, ZoneOffset.UTC);
 	}
 
 	public String getRank() {

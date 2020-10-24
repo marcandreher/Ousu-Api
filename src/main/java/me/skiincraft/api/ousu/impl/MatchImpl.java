@@ -2,6 +2,10 @@ package me.skiincraft.api.ousu.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,20 +37,20 @@ public class MatchImpl implements Match{
 	public String getName() {
 		return object.get("name").getAsString();
 	}
-	
-	private Date getDate(String parse) {
-		try {
-			return (object.get(parse).isJsonNull()) ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(object.get(parse).getAsString());
-		} catch (ParseException e) {
+
+	private OffsetDateTime getDate(String parse) {
+		if (object.get(parse).isJsonNull()){
 			return null;
 		}
+		LocalDateTime time = LocalDateTime.parse(object.get(parse).getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		return OffsetDateTime.of(time, ZoneOffset.UTC);
 	}
 
-	public Date getStartTime() {
+	public OffsetDateTime getStartTime() {
 		return getDate("start_time");
 	}
 
-	public Date getEndTime() {
+	public OffsetDateTime getEndTime() {
 		return getDate("end_time");
 	}
 	

@@ -2,6 +2,10 @@ package me.skiincraft.api.ousu.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +15,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import me.skiincraft.api.ousu.OusuAPI;
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.beatmap.Beatmap;
 import me.skiincraft.api.ousu.entity.multiplayer.Game;
 import me.skiincraft.api.ousu.entity.multiplayer.Match;
@@ -85,19 +89,19 @@ public class GameImpl implements Game {
 		return score;
 	}
 	
-	private Date getDate(String parse) {
-		try {
-			return (object.get(parse).isJsonNull()) ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(object.get(parse).getAsString());
-		} catch (ParseException e) {
+	private OffsetDateTime getDate(String parse) {
+		if (object.get(parse).isJsonNull()){
 			return null;
 		}
+		LocalDateTime time = LocalDateTime.parse(object.get(parse).getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		return OffsetDateTime.of(time, ZoneOffset.UTC);
 	}
 
-	public Date getGameStartTime() {
+	public OffsetDateTime getGameStartTime() {
 		return getDate("start_time");
 	}
 
-	public Date getGameEndTime() {
+	public OffsetDateTime getGameEndTime() {
 		return getDate("end_time");
 	}
 	

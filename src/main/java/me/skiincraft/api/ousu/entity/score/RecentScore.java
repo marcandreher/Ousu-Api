@@ -1,14 +1,14 @@
 package me.skiincraft.api.ousu.entity.score;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.objects.Gamemode;
 import me.skiincraft.api.ousu.entity.user.User;
 import me.skiincraft.api.ousu.impl.RecentScoreImpl;
@@ -40,27 +40,23 @@ public interface RecentScore extends Scoreable {
 	 */
 	Request<User> getUser(Gamemode gamemode);
 	
-	/**Is the date the score was earned 
+	/**
+	 * Is the date the score was earned
 	 */
-	Date getDate();
+	OffsetDateTime getDate();
 	String getRank();
 	
-	public static RecentScore getSample() {
+	static RecentScore getSample() {
 		return new RecentScoreImpl(new SimpleJson().getJsonAsResource("recentScoreJson.json").get(0).getAsJsonObject(), null);
 	}
 	
-	public static List<RecentScore> getSampleCollection() {
-		return new MakeList<RecentScore>() {
-
-			public List<RecentScore> make() {
-				List<RecentScore> score = new ArrayList<>();
-				JsonArray array = new SimpleJson().getJsonAsResource("recentScoreJson.json");
-				for (JsonElement ele : array) {
-					JsonObject object = ele.getAsJsonObject();
-					score.add(new RecentScoreImpl(object, null));
-				}
-				return score;
-			}
-		}.make();
+	static List<RecentScore> getSampleCollection() {
+		List<RecentScore> score = new ArrayList<>();
+		JsonArray array = new SimpleJson().getJsonAsResource("recentScoreJson.json");
+		for (JsonElement ele : array) {
+			JsonObject object = ele.getAsJsonObject();
+			score.add(new RecentScoreImpl(object, null));
+		}
+		return score;
 	}
 }

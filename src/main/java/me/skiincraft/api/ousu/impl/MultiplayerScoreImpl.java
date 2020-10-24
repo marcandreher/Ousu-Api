@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import me.skiincraft.api.ousu.OusuAPI;
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.multiplayer.Game;
 import me.skiincraft.api.ousu.entity.multiplayer.MultiplayerScore;
 import me.skiincraft.api.ousu.entity.objects.Gamemode;

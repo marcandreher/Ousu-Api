@@ -2,12 +2,16 @@ package me.skiincraft.api.ousu.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import com.google.gson.JsonObject;
 
 import me.skiincraft.api.ousu.OusuAPI;
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.beatmap.Beatmap;
 import me.skiincraft.api.ousu.entity.objects.Gamemode;
 import me.skiincraft.api.ousu.entity.objects.Mods;
@@ -25,14 +29,13 @@ public class ScoreImpl implements Score {
 		this.beatmapid = beatmapid;
 		this.object = object;
 	}
-		
-	private Date getDate(String parse) {
-		try {
-			return (object.get(parse).isJsonNull()) ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(object.get(parse).getAsString());
-		} catch (ParseException e) {
-			e.printStackTrace();
+
+	private OffsetDateTime getDate(String parse) {
+		if (object.get(parse).isJsonNull()){
+			return null;
 		}
-		return null;
+		LocalDateTime time = LocalDateTime.parse(object.get(parse).getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		return OffsetDateTime.of(time, ZoneOffset.UTC);
 	}
 	
 	public long getScoreId() {
@@ -98,7 +101,7 @@ public class ScoreImpl implements Score {
 		return Mods.get(object.get("enabled_mods").getAsLong());
 	}
 
-	public Date getScoreDate() {
+	public OffsetDateTime getScoreDate() {
 		return getDate("date");
 	}
 

@@ -1,6 +1,6 @@
 package me.skiincraft.api.ousu.entity.multiplayer;
 
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.objects.Gamemode;
 import me.skiincraft.api.ousu.entity.objects.Mods;
 import me.skiincraft.api.ousu.entity.user.User;

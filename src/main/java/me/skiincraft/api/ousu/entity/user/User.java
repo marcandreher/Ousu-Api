@@ -1,8 +1,9 @@
 package me.skiincraft.api.ousu.entity.user;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.objects.Gamemode;
 import me.skiincraft.api.ousu.entity.objects.PlayedTime;
 import me.skiincraft.api.ousu.entity.objects.ProfileEvents;
@@ -26,7 +27,7 @@ public interface User {
 	/**
 	 * <p>Is the join date of the requested user</p>
 	 */
-	String getJoinDate();
+	OffsetDateTime getJoinDate();
 	
 	/**
 	 * <p>Is the game mode of the requested user</p>
@@ -69,7 +70,7 @@ public interface User {
 	
 	/**
 	 * <p>Returns the URL of this user's avatar
-	 * <br>{@link http://s.ppy.sh/a/userid.png}</br></p>
+	 * <br>(http://s.ppy.sh/a/userid.png)</br></p>
 	 * 
 	*/
 	default String getUserAvatar() {
@@ -77,16 +78,16 @@ public interface User {
 	}
 	/**
 	 * <p>Returns the flag of this user's country
-	 * <br>{@link https://osu.ppy.sh/images/flags/CountryCode.png}</br></p>
+	 * <br>(https://osu.ppy.sh/images/flags/CountryCode.png)</br></p>
 	 * 
 	*/
 	default String getUserFlag() {
 		return "https://osu.ppy.sh/images/flags/" + getCountryCode() + ".png";
-	};
+	}
 	
 	/**
 	 * <p>Returns the URL of this user's profile
-	 * <br>{@link http://s.ppy.sh/a/userid.png}</br></p>
+	 * <br>(http://s.ppy.sh/a/userid.png)</br></p>
 	 * 
 	*/
 	default String getURL() {
@@ -120,18 +121,18 @@ public interface User {
 	
 	default Request<List<Score>> getTopScore(int limit){
 		return getTopScore(getGamemode(), limit);
-	};
+	}
 	Request<List<Score>> getTopScore(Gamemode gamemode, int limit);
 
 	default Request<List<RecentScore>> getRecentScore(int limit){
 		return getRecentScore(getGamemode(), limit);
-	};
+	}
 	Request<List<RecentScore>> getRecentScore(Gamemode gamemode, int limit);
 	
 	/**<h1>Get a Sample</h1>
 	 * <p>This example will not make any Request</p>
 	 */
-	public static User getSample() {
+	static User getSample() {
 		return new UserImpl(new SimpleJson().getJsonAsResource("userJson.json").get(0).getAsJsonObject(), Gamemode.Standard, null);
 	}
 }

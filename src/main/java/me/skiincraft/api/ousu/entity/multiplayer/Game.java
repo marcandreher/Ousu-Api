@@ -1,9 +1,9 @@
 package me.skiincraft.api.ousu.entity.multiplayer;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.beatmap.Beatmap;
 import me.skiincraft.api.ousu.entity.objects.Gamemode;
 import me.skiincraft.api.ousu.entity.objects.Mods;
@@ -14,8 +14,8 @@ public interface Game {
 	
 	Match getMatch();
 	long getGameId();
-	Date getGameStartTime();
-	Date getGameEndTime();
+	OffsetDateTime getGameStartTime();
+	OffsetDateTime getGameEndTime();
 	
 	/**<p>Get a beatmap by id</p>	 */
 	long getBeatmapId();

@@ -1,5 +1,6 @@
 package me.skiincraft.api.ousu.entity.score;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +9,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.beatmap.Beatmap;
 import me.skiincraft.api.ousu.entity.objects.Gamemode;
 import me.skiincraft.api.ousu.entity.user.User;
@@ -66,28 +67,23 @@ public interface Score extends Scoreable {
 	
 	/**Is the date the score was earned 
 	 */
-	Date getScoreDate();
+	OffsetDateTime getScoreDate();
 	String getRank();
 	float getScorePP();
 	
-	public static Score getSample() {
+	static Score getSample() {
 		return new ScoreImpl(new SimpleJson().getJsonAsResource("beatmapScoreJson.json").get(0).getAsJsonObject(), 1065901, null);
 	}
 	
-	public static List<Score> getSampleTop() {
-		return new MakeList<Score>() {
+	static List<Score> getSampleTop() {
+		List<Score> scores = new ArrayList<>();
+		JsonArray array = new SimpleJson().getJsonAsResource("bestScoreJson.json");
+		for (JsonElement ele : array) {
+			JsonObject object = ele.getAsJsonObject();
+			scores.add(new ScoreImpl(object, object.get("beatmap_id").getAsLong(), null));
+		}
 
-			public List<Score> make() {
-				List<Score> scores = new ArrayList<Score>();
-				JsonArray array = new SimpleJson().getJsonAsResource("bestScoreJson.json");
-				for (JsonElement ele : array) {
-					JsonObject object = ele.getAsJsonObject();
-					scores.add(new ScoreImpl(object, object.get("beatmap_id").getAsLong(), null));	
-				}
-				
-				return scores;
-			}
-		}.make();
+		return scores;
 	}
 
 }

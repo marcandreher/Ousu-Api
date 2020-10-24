@@ -5,15 +5,16 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.function.BiConsumer;
 
 import com.google.gson.JsonObject;
 
 import me.skiincraft.api.ousu.OusuAPI;
-import me.skiincraft.api.ousu.Request;
+import me.skiincraft.api.ousu.requests.Request;
 import me.skiincraft.api.ousu.entity.beatmap.Beatmap;
 import me.skiincraft.api.ousu.entity.beatmap.BeatmapSet;
 import me.skiincraft.api.ousu.entity.objects.Approval;
@@ -23,8 +24,8 @@ import me.skiincraft.api.ousu.entity.user.User;
 
 public class BeatmapImpl implements Beatmap {
 
-	private JsonObject object;
-	private OusuAPI api;
+	private final JsonObject object;
+	private final OusuAPI api;
 	private BeatmapSet beatmapset;
 	
 	public BeatmapImpl(JsonObject jsonObject, OusuAPI api) {
@@ -38,13 +39,12 @@ public class BeatmapImpl implements Beatmap {
 		this.api = api;
 	}
 	
-	private Date getDate(String parse) {
-		try {
-			return (object.get(parse).isJsonNull()) ? null : new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(object.get(parse).getAsString());
-		} catch (ParseException e) {
-			e.printStackTrace();
+	private OffsetDateTime getDate(String parse) {
+		if (object.get(parse).isJsonNull()){
+			return null;
 		}
-		return null;
+		LocalDateTime time = LocalDateTime.parse(object.get(parse).getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		return OffsetDateTime.of(time, ZoneOffset.UTC);
 	}
 	
 	boolean isNull(String str) {
@@ -143,15 +143,15 @@ public class BeatmapImpl implements Beatmap {
 		return object.get("count_normal").getAsInt();
 	}
 
-	public Date getPublishDate() {
+	public OffsetDateTime getPublishDate() {
 		return getDate("submit_date");
 	}
 
-	public Date getApprovedDate() {
+	public OffsetDateTime getApprovedDate() {
 		return getDate("approved_date");
 	}
 
-	public Date getLastUpdateDate() {
+	public OffsetDateTime getLastUpdateDate() {
 		return getDate("last_update");
 	}
 
