@@ -13,7 +13,6 @@ import me.skiincraft.api.ousu.entity.objects.Gamemode;
 import me.skiincraft.api.ousu.entity.user.User;
 import me.skiincraft.api.ousu.impl.RecentScoreImpl;
 import me.skiincraft.api.ousu.json.SimpleJson;
-import me.skiincraft.api.ousu.util.MakeList;
 
 /**<h1>RecentScore</h1>
  * <p>Interface to display the requested Recent Score from a User 

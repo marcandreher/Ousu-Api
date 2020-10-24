@@ -11,9 +11,9 @@ import me.skiincraft.api.ousu.entity.replay.Replay;
 
 public class ReplayImpl implements Replay {
 
-	private OusuAPI api;
-	private JsonObject object;
-	private long beatmapid;
+	private final OusuAPI api;
+	private final JsonObject object;
+	private final long beatmapid;
 	
 	public ReplayImpl(JsonObject object, long beatmapid, OusuAPI api) {
 		this.object = object;

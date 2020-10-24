@@ -15,10 +15,10 @@ import me.skiincraft.api.ousu.entity.score.Score;
 
 public class BeatmapScoreImpl implements BeatmapScore {
 
-	private Score[] scores;
+	private final Score[] scores;
 	
 	public BeatmapScoreImpl(List<Score> scores) {
-		this.scores = scores.toArray(new Score[scores.size()]);
+		this.scores = scores.toArray(new Score[0]);
 	}
 	
 	public BeatmapScoreImpl(JsonArray jsonScoreArray, long beatmapid, OusuAPI api) {

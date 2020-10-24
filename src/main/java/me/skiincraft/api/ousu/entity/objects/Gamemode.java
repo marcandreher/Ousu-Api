@@ -19,8 +19,8 @@ public enum Gamemode {
 	
 	Standard(0, "Osu!"), Taiko(1, "Osu!Taiko"), Catch(2, "Osu!Ctb"), Mania(3, "Osu!Mania");
 	
-	private int id;
-	private String displayName;
+	private final int id;
+	private final String displayName;
 	
 	Gamemode(int id, String displayName){
 		this.id = id;

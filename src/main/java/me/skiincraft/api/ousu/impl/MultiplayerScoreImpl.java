@@ -13,9 +13,9 @@ import me.skiincraft.api.ousu.entity.user.User;
 
 public class MultiplayerScoreImpl implements MultiplayerScore {
 
-	private JsonObject object;
-	private Game game;
-	private OusuAPI api;
+	private final JsonObject object;
+	private final Game game;
+	private final OusuAPI api;
 	
 	public MultiplayerScoreImpl(JsonObject object, Game game, OusuAPI api) {
 		this.object = object;

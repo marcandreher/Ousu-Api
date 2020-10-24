@@ -17,7 +17,7 @@ public enum Team {
 
 	HeadToHead(0), Tag_Coop(1), Team_Versus(2), Tag_Team_Versus(3);
 	
-	private int id;
+	private final int id;
 	
 	Team(int id){
 		this.id = id;

@@ -2,7 +2,6 @@ package me.skiincraft.api.ousu.entity.score;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -15,7 +14,6 @@ import me.skiincraft.api.ousu.entity.objects.Gamemode;
 import me.skiincraft.api.ousu.entity.user.User;
 import me.skiincraft.api.ousu.impl.ScoreImpl;
 import me.skiincraft.api.ousu.json.SimpleJson;
-import me.skiincraft.api.ousu.util.MakeList;
 
 public interface Score extends Scoreable {
 	

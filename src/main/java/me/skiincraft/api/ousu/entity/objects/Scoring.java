@@ -16,7 +16,7 @@ public enum Scoring {
 
 	Score(0), Accuracy(1), Combo(2), Score_v2(3);
 	
-	private int id;
+	private final int id;
 	
 	Scoring(int id){
 		this.id = id;

@@ -16,8 +16,8 @@ import me.skiincraft.api.ousu.entity.user.User;
 
 public class RecentScoreImpl implements RecentScore {
 
-	public JsonObject object;
-	public OusuAPI api;
+	public final JsonObject object;
+	public final OusuAPI api;
 	
 	public RecentScoreImpl(JsonObject object, OusuAPI api) {
 		this.object = object;

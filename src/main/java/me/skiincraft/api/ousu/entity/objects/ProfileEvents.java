@@ -9,12 +9,12 @@ import org.jsoup.select.Elements;
 
 public class ProfileEvents {
 
-	private String displayHtml;
-	private int beatmapid;
-	private int beatmapSetID;
+	private final String displayHtml;
+	private final int beatmapid;
+	private final int beatmapSetID;
 	
-	private String eventDate;
-	private int epicfactor;
+	private final String eventDate;
+	private final int epicfactor;
 	
 	public ProfileEvents(String displayHtml, int beatmapid, int beatmapSetID, String eventDate, int epicfactor) {
 		this.displayHtml = displayHtml;
@@ -50,8 +50,8 @@ public class ProfileEvents {
 	
 	public static class EventDisplay {
 		
-		public String eventhtml;
-		private Document parse;
+		public final String eventhtml;
+		private final Document parse;
 		
 		public EventDisplay(String eventhtml) {
 			this.eventhtml = eventhtml;
@@ -60,7 +60,7 @@ public class ProfileEvents {
 		
 		public String getUsername() {
 			String[] textsplit = parse.text().split(" ");
-			StringBuffer b = new StringBuffer();
+			StringBuilder b = new StringBuilder();
 			for (String t :textsplit) {
 				if (t.contains("achieved")) {
 					break;
@@ -88,20 +88,20 @@ public class ProfileEvents {
 					val++;
 				}
 			}
-			return Integer.valueOf(htmlid.substring(0, val));
+			return Integer.parseInt(htmlid.substring(0, val));
 		}
 		
 		public String getBeatmapDisplay() {
 			List<String> textsplit = Arrays.asList(parse.text().split(" "));
 			int acho = 1;
-			StringBuffer map = new StringBuffer();
+			StringBuilder map = new StringBuilder();
 			for (String t :textsplit) {
 				if (!t.equals("on")) {
 					acho++;
 					continue;
 				}
 				for (int i = acho; i < textsplit.size();i++) {
-					map.append(textsplit.get(i) + " ");	
+					map.append(textsplit.get(i)).append(" ");
 				}
 				return map.toString();
 				

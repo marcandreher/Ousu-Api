@@ -44,9 +44,9 @@ public enum Mods {
 	SCORE_V2(536870912, "Score v2", "2xScore"),
 	LAST_MOD(1073741824, "Last Mod", "Last Mod");
 	
-	private long id;
-	private String displayName;
-	private String sigla;
+	private final long id;
+	private final String displayName;
+	private final String sigla;
 	
 	Mods(int id, String displayName, String sigla) {
 		this.id = id;
@@ -71,7 +71,7 @@ public enum Mods {
 				bit -= mod.id;
 			}
 
-		return mods.toArray(new Mods[mods.size()]);
+		return mods.toArray(new Mods[0]);
 	}
 	//
 	

@@ -1,13 +1,10 @@
 package me.skiincraft.api.ousu.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -20,9 +17,9 @@ import me.skiincraft.api.ousu.entity.multiplayer.Match;
 
 public class MatchImpl implements Match{
 	
-	private JsonObject completeobject;
-	private JsonObject object;
-	private OusuAPI api;
+	private final JsonObject completeobject;
+	private final JsonObject object;
+	private final OusuAPI api;
 	
 	public MatchImpl(JsonObject object, OusuAPI api) {
 		this.completeobject = object;

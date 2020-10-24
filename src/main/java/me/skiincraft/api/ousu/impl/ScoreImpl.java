@@ -1,12 +1,9 @@
 package me.skiincraft.api.ousu.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 import com.google.gson.JsonObject;
 
@@ -20,9 +17,9 @@ import me.skiincraft.api.ousu.entity.user.User;
 
 public class ScoreImpl implements Score {
 
-	private OusuAPI api;
-	private long beatmapid;
-	private JsonObject object;
+	private final OusuAPI api;
+	private final long beatmapid;
+	private final JsonObject object;
 	
 	public ScoreImpl(JsonObject object, long beatmapid, OusuAPI api) {
 		this.api = api;
@@ -30,11 +27,11 @@ public class ScoreImpl implements Score {
 		this.object = object;
 	}
 
-	private OffsetDateTime getDate(String parse) {
-		if (object.get(parse).isJsonNull()){
+	private OffsetDateTime getDate() {
+		if (object.get("date").isJsonNull()){
 			return null;
 		}
-		LocalDateTime time = LocalDateTime.parse(object.get(parse).getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		LocalDateTime time = LocalDateTime.parse(object.get("date").getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		return OffsetDateTime.of(time, ZoneOffset.UTC);
 	}
 	
@@ -102,7 +99,7 @@ public class ScoreImpl implements Score {
 	}
 
 	public OffsetDateTime getScoreDate() {
-		return getDate("date");
+		return getDate();
 	}
 
 	public String getRank() {

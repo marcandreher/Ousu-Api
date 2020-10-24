@@ -2,10 +2,10 @@ package me.skiincraft.api.ousu.entity.objects;
 
 public class PlayedTime {
 	
-	private int days;
-	private int horas;
-	private int minutos;
-	private int segundos;
+	private final int days;
+	private final int horas;
+	private final int minutos;
+	private final int segundos;
 	
 	public PlayedTime(int days ,int hours ,int minutes,int secounds) {
 		this.days = days;

@@ -3,7 +3,7 @@ package me.skiincraft.api.ousu.exceptions;
 @SuppressWarnings("serial")
 public class TokenException extends IllegalArgumentException {
 
-	private Exception originalerror;
+	private final Exception originalerror;
 	
 	public TokenException(String message, Exception originalerror) {
 		super(message);

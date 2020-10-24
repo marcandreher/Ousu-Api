@@ -64,8 +64,8 @@ public interface Scoreable {
 	 */
 	default boolean isReplayAvailable() {
 		return false;
-	};
-	
+	}
+
 	/**<p>Show the enabled mods on this Replay</p>
 	 */
 	Mods[] getEnabledMods();

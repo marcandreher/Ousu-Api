@@ -32,8 +32,8 @@ public enum Genre {
 	HIP_HOP(9, "Hip Hop"),
 	ELECTRONIC(10, "Electronic");
 	
-	private int id;
-	private String displayName;
+	private final int id;
+	private final String displayName;
 	
 	Genre(int id, String displayName) {
 		this.id = id;

@@ -15,7 +15,7 @@ import me.skiincraft.api.ousu.entity.beatmap.BeatmapSet;
 
 public class BeatmapSetImpl implements BeatmapSet {
 
-	private Beatmap[] beatmaps;
+	private final Beatmap[] beatmaps;
 	
 	public BeatmapSetImpl(List<Beatmap> beatmaps) {
 		this.beatmaps = beatmaps.toArray(new Beatmap[0]);
