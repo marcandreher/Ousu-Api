@@ -453,18 +453,12 @@ public class OusuAPI {
 					if (array.size() == 0) {
 						throw new ScoreException("It was not possible to find recent maps of the requested player, or the requested player did not exist.", null);
 					}
-					
-					this.scores = new MakeList<RecentScore>() {
-
-						public List<RecentScore> make() {
-							List<RecentScore> scores = new ArrayList<>();
-							for (JsonElement jsonElement : array) {
-								JsonObject object = jsonElement.getAsJsonObject();
-								scores.add(new RecentScoreImpl(object, api));
-							}
-							return scores;
-						}
-					}.make();
+					List<RecentScore> scores = new ArrayList<>();
+					for (JsonElement jsonElement : array) {
+						JsonObject object = jsonElement.getAsJsonObject();
+						scores.add(new RecentScoreImpl(object, api));
+					}
+					this.scores = scores;
 				}
 				return scores;
 			}
