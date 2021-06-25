@@ -1,10 +1,9 @@
 # OusuAPI - Osu!Api
-A Simple osu!API Wrapper
+- A Simple osu!API Wrapper
 
-## My Objective
-`With this improvised "API", I intend to use it in my projects. I would not release it in open source. I decided to leave the source code released because I had trouble finding a Java Wrapper that worked correctly. I hope you enjoy the basic functions of this API`
-
-Sorry my english :3
+## OsuAPI V2 Version
+- This version is a little outdated! I recommend that you use the version below, as it supports versions v1 and v2 of the Osu API.
+<br> [OusuAPI](https://github.com/Cristian-Sknz/OusuAPI-v2)
 
 ## Dependencias
 The dependencies are inside build.gradle
