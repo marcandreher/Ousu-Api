@@ -43,46 +43,40 @@ dependencies {
 I made it pretty simple.
 
 ```java
- //If desired, create a static field for easy access. (This is not necessary)
-	private static OusuAPI api;
-	@Getters;
- 
-	public static Main(String[] args) {
-		//Enter your Osu API token
-		api = new OusuAPI("API_KEY");
-		
-		// Requesting a player
-		Request<User> userRequest = api.getUser("skiincraft", Gamemode.Standard);
-		
-		// Always remember that a "Request <>" Class
-		// will always make a new request. 
-		// If the request has already been made, check using:
-		userRequest.wasRequested(); // if requested it will return "true"
-		
-		//Getting information from a player.
-		User user = userRequest.get();
-		
-		//Print the information obtained
-		System.out.println("Username: " + user.getUsername());
-		System.out.println("Ranking: #" + user.getRanking());
-		System.out.println("PP: " + user.getPP());
-	}
+OusuAPI api = new OusuAPI("API_KEY");
+
+// Requesting a player
+Request<User> userRequest = api.getUser("skiincraft", Gamemode.Standard);
+
+/* Always remember that a "Request<?>" Class
+ * will always make a new request. 
+ * If the request has already been made, check using:
+ */
+userRequest.wasRequested(); // if requested it will return "true"
+
+//Getting information from a player.
+User user = userRequest.get();
+
+//Print the information obtained
+System.out.println("Username: " + user.getUsername());
+System.out.println("Ranking: #" + user.getRanking());
+System.out.println("PP: " + user.getPP());
 ```
 In the case of beatmaps do
 ```java
 [....]
-		// Requesting a beatmap
-		Request<Beatmap> beatmapRequest = api.getBeatmap(1018869); // beatmapId
-		
-		// Getting information from a beatmap.
-		Beatmap beatmap = beatmapRequest.get();
-		      // BeatmapSet beatmapset = api.getBeatmapSet(474376).get(); in the case of beatmapset
-		
-		//Print the information obtained
-		System.out.println("Title: " + beatmap.getTitle());
-		System.out.println("Artist: #" + beatmap.getArtist());
-		System.out.println("Creator: " + beatmap.getCreator());
-		System.out.println("BMP: " + beatmap.getBPM());
+// Requesting a beatmap
+Request<Beatmap> beatmapRequest = api.getBeatmap(1018869); // beatmapId
+
+// Getting information from a beatmap.
+Beatmap beatmap = beatmapRequest.get();
+// BeatmapSet beatmapset = api.getBeatmapSet(474376).get(); in the case of beatmapset
+
+//Print the information obtained
+System.out.println("Title: " + beatmap.getTitle());
+System.out.println("Artist: #" + beatmap.getArtist());
+System.out.println("Creator: " + beatmap.getCreator());
+System.out.println("BMP: " + beatmap.getBPM());
 ```
 
 This project is not complete, I intend to update whenever I can.
