@@ -118,6 +118,44 @@ public class OusuAPI {
 			}
 		};
 	}
+
+	public Request<Beatmap> getBeatmapByChecksum(String checksum) {
+		final OusuAPI api = this;
+		return new Request<Beatmap>() {
+
+			private Beatmap beatmap;
+			private String json;
+			
+			public boolean wasRequested() {
+				return beatmap != null;
+			}
+			
+			public Beatmap get() {
+				if (!wasRequested()) {
+					String get = "https://osu.ppy.sh/api/get_beatmaps";
+					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "h", checksum);
+					json = String.valueOf(bc.body());
+					
+					checkHasValid(json);
+					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+					
+					if (array.size() == 0) {
+						throw new BeatmapException("This requested beatmap was not found. (jsonnull)", null);
+					}
+					beatmap = new BeatmapImpl(array.get(0).getAsJsonObject(), api);
+				}
+				return beatmap;
+			}
+
+			public void getWithJson(BiConsumer<Beatmap, String> biConsumer) {
+				biConsumer.accept(get(), json);
+			}
+
+			public Beatmap getSample() {
+				return Beatmap.getSample();
+			}
+		};
+	}
 	
 	/**<h1>Request<{@linkplain BeatmapSet}></h1>
 	 * <p>
