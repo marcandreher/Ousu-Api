@@ -724,8 +724,9 @@ public class OusuAPI {
 					JsonObject object = new JsonParser().parse(json).getAsJsonObject();
 					
 					if (object.size() == 0 || object.get("match").getAsLong() == 0) {
-						throw new MatchException("The requested match was not found.", null);
+						throw new me.skiincraft.api.ousu.exceptions.MatchException("The requested match was not found.", null);
 					}
+					
 					
 					match = new MatchImpl(object, api);
 				}
