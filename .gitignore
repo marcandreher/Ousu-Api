@@ -6,3 +6,4 @@
 
 .m2/
 target/
+.vscode/

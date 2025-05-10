@@ -1,6 +1,5 @@
 package me.skiincraft.api.ousu;
 
-import com.github.kevinsawicki.http.HttpRequest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -18,18 +17,36 @@ import me.skiincraft.api.ousu.exceptions.*;
 import me.skiincraft.api.ousu.impl.*;
 import me.skiincraft.api.ousu.requests.Request;
 
+import okhttp3.OkHttpClient;
+import okhttp3.HttpUrl;
+import okhttp3.Response;
+import okhttp3.ConnectionPool;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class OusuAPI {
 	
 	private String token;
+	private OkHttpClient httpClient;
+		// Singleton OkHttpClient for optimal performance with connection pooling
+	private static final OkHttpClient SHARED_HTTP_CLIENT = new OkHttpClient.Builder()
+		.connectTimeout(10, TimeUnit.SECONDS)
+		.readTimeout(30, TimeUnit.SECONDS)
+		.writeTimeout(15, TimeUnit.SECONDS)
+		.connectionPool(new ConnectionPool(10, 5, TimeUnit.MINUTES)) // Keep up to 10 idle connections open for 5 minutes
+		.retryOnConnectionFailure(true) // Auto retry on connection failures
+		.build();
 
 	public OusuAPI(String token, boolean testToken) {
 		this.setToken(token);
+		this.httpClient = SHARED_HTTP_CLIENT;
 
 		if (token == null || token.equals("")) {
 			throw new TokenException("API Key is null, enter an API Key.", null);
@@ -40,7 +57,7 @@ public class OusuAPI {
 		}
 
 		if (testToken) {
-			String body = HttpRequest.get("https://osu.ppy.sh/api/get_user?k=" + token).body();
+			String body = executeGet("https://osu.ppy.sh/api/get_user", Map.of("k", token));
 			checkHasValid(body);
 		}
 	}
@@ -53,6 +70,8 @@ public class OusuAPI {
 	
 	public OusuAPI(String token) {
 		this.setToken(token);
+		this.httpClient = SHARED_HTTP_CLIENT;
+		
 		if (token == null || token.equals("")) {
 			throw new TokenException("API Key is null, enter an API Key.", null);
 		}
@@ -61,8 +80,51 @@ public class OusuAPI {
 			throw new TokenException("Enter a valid API key. The key you entered is invalid.", null);
 		}
 		
-		String body = HttpRequest.get("https://osu.ppy.sh/api/get_user?k=" + token).body();
+		String body = executeGet("https://osu.ppy.sh/api/get_user", Map.of("k", token));
 		checkHasValid(body);
+	}
+		/**
+	 * Executes a GET request using OkHttp client with optimized performance
+	 * 
+	 * @param url The base URL
+	 * @param params Query parameters
+	 * @return Response body as String
+	 */
+	private String executeGet(String url, Map<String, String> params) {
+		HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+		
+		// Add all query parameters
+		for (Map.Entry<String, String> param : params.entrySet()) {
+			urlBuilder.addQueryParameter(param.getKey(), param.getValue());
+		}
+				// Build a request without caching
+		okhttp3.Request request = new okhttp3.Request.Builder()
+				.url(urlBuilder.build())
+				.get()
+				.build();
+		
+		try (Response response = httpClient.newCall(request).execute()) {
+			if (!response.isSuccessful()) {
+				throw new IOException("Unexpected response code: " + response);
+			}
+			return response.body().string();
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to execute request: " + e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * Parse JSON string to JsonArray
+	 */
+	private JsonArray parseJsonArray(String json) {
+		return JsonParser.parseString(json).getAsJsonArray();
+	}
+	
+	/**
+	 * Parse JSON string to JsonObject
+	 */
+	private JsonObject parseJsonObject(String json) {
+		return JsonParser.parseString(json).getAsJsonObject();
 	}
 	
 	/**<h1>Request<{@linkplain Beatmap}></h1>
@@ -95,11 +157,10 @@ public class OusuAPI {
 			public Beatmap get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_beatmaps";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", Long.toString(id));
-					json = String.valueOf(bc.body());
+					json = executeGet(get, Map.of("k", api.getToken(), "b", Long.toString(id)));
 					
 					checkHasValid(json);
-					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+					JsonArray array = parseJsonArray(json);
 					
 					if (array.size() == 0) {
 						throw new BeatmapException("This requested beatmap was not found. (jsonnull)", null);
@@ -133,11 +194,10 @@ public class OusuAPI {
 			public Beatmap get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_beatmaps";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "h", checksum);
-					json = String.valueOf(bc.body());
+					json = executeGet(get, Map.of("k", api.getToken(), "h", checksum));
 					
 					checkHasValid(json);
-					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+					JsonArray array = parseJsonArray(json);
 					
 					if (array.size() == 0) {
 						throw new BeatmapException("This requested beatmap was not found. (jsonnull)", null);
@@ -185,12 +245,10 @@ public class OusuAPI {
 			public BeatmapSet get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_beatmaps";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "s", Long.toString(id));
-					
-					json = String.valueOf(bc.body());
+					json = executeGet(get, Map.of("k", api.getToken(), "s", Long.toString(id)));
 					
 					checkHasValid(json);
-					JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
+					JsonArray jsonArray = parseJsonArray(json);
 					if (jsonArray.size() == 0) {
 						throw new BeatmapException("This requested beatmap was not found.", null);
 					}
@@ -239,12 +297,10 @@ public class OusuAPI {
 			public BeatmapScore get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_scores";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapId + "", "limit",
-							limit + "");
-					json = String.valueOf(bc.body());
+					json = executeGet(get, Map.of("k", api.getToken(), "b", beatmapId + "", "limit", limit + ""));
 					
 					checkHasValid(json);
-					JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
+					JsonArray jsonArray = parseJsonArray(json);
 					
 					if (jsonArray.size() == 0) {
 						throw new BeatmapException("This requested beatmap was not found.", null);
@@ -301,11 +357,10 @@ public class OusuAPI {
 			public Score get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_scores";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapid+"", "u", user, "limit", "1");
-					json = String.valueOf(bc.body());
+					json = executeGet(get, Map.of("k", api.getToken(), "b", beatmapid+"", "u", user, "limit", "1"));
 					
 					checkHasValid(json);
-					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+					JsonArray array = parseJsonArray(json);
 					
 					if (array.size() == 0) {
 						throw new ScoreException("The requested player's score could not be found on this beatmap or the beatmap is invalid.", null);
@@ -364,12 +419,10 @@ public class OusuAPI {
 			public List<Beatmap> get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_beatmaps";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", user, "limit",
-							(limit == 0) ? 500 : limit + "");
-					json = String.valueOf(bc.body());
+					json = executeGet(get, Map.of("k", api.getToken(), "u", user, "limit", (limit == 0) ? "500" : limit + ""));
 					
 					checkHasValid(json);
-					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+					JsonArray array = parseJsonArray(json);
 					if (array.size() == 0) {
 						throw new BeatmapException("It was not possible to find beatmaps created by this player or the player does not exist.", null);
 					}
@@ -422,11 +475,10 @@ public class OusuAPI {
 			public List<Beatmap> get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_beatmaps";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "since", new SimpleDateFormat("yyyy-MM-dd").format(date));
-					json = String.valueOf(bc.body());
+					json = executeGet(get, Map.of("k", api.getToken(), "since", new SimpleDateFormat("yyyy-MM-dd").format(date)));
 					
 					checkHasValid(json);
-					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+					JsonArray array = parseJsonArray(json);
 					if (array.size() == 0) {
 						throw new BeatmapException("It was not possible to find beatmaps for the requested date.", null);
 					}
@@ -482,12 +534,10 @@ public class OusuAPI {
 			public List<RecentScore> get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_user_recent";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", user, "m", gamemode.getId()+"","limit", limit+"");
-					
-					json = bc.body();
+					json = executeGet(get, Map.of("k", api.getToken(), "u", user, "m", gamemode.getId()+"","limit", limit+""));
 					
 					checkHasValid(json);
-					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+					JsonArray array = parseJsonArray(json);
 					if (array.size() == 0) {
 						throw new ScoreException("It was not possible to find recent maps of the requested player, or the requested player did not exist.", null);
 					}
@@ -543,13 +593,10 @@ public class OusuAPI {
 			public List<Score> get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_user_best";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", user, "limit", limit+"", "m", mode.getId()+"");
-					bc.accept("application/json").contentType();
-					
-					json = bc.body();
+					json = executeGet(get, Map.of("k", api.getToken(), "u", user, "limit", limit+"", "m", mode.getId()+""));
 					
 					checkHasValid(json);
-					JsonArray array = new JsonParser().parse(json).getAsJsonArray();
+					JsonArray array = parseJsonArray(json);
 					
 					if (array.size() == 0) {
 						throw new ScoreException("It was not possible to find top maps of the requested player, or the requested player did not exist.", null);
@@ -608,11 +655,10 @@ public class OusuAPI {
 			public User get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_user";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "u", username, "m", gamemode.getId()+"");
-					json = String.valueOf(bc.body());
+					json = executeGet(get, Map.of("k", api.getToken(), "u", username, "m", gamemode.getId()+""));
 					
 					checkHasValid(json);
-					JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
+					JsonArray jsonArray = parseJsonArray(json);
 					if (jsonArray.size() == 0) {
 						throw new UserException("This requested user was not found.", null);
 					}
@@ -664,11 +710,10 @@ public class OusuAPI {
 			public Replay get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_replay";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "b", beatmapid+"", "u", user);
-					json = bc.body();
+					json = executeGet(get, Map.of("k", api.getToken(), "b", beatmapid+"", "u", user));
 					
 					checkHasValid(json);
-					JsonObject object = new JsonParser().parse(json).getAsJsonObject();
+					JsonObject object = parseJsonObject(json);
 					if (object.size() == 0) {
 						throw new ReplayException("It was not possible to find the replay of this user, or beatmap/user does not exist.", null);
 					}
@@ -717,11 +762,10 @@ public class OusuAPI {
 			public Match get() {
 				if (!wasRequested()) {
 					String get = "https://osu.ppy.sh/api/get_match";
-					HttpRequest bc = HttpRequest.get(get, true, "k", api.getToken(), "mp", matchId);
-					json = bc.body();
+					json = executeGet(get, Map.of("k", api.getToken(), "mp", String.valueOf(matchId)));
 					
 					checkHasValid(json);
-					JsonObject object = new JsonParser().parse(json).getAsJsonObject();
+					JsonObject object = parseJsonObject(json);
 					
 					if (object.size() == 0 || object.get("match").getAsLong() == 0) {
 						throw new me.skiincraft.api.ousu.exceptions.MatchException("The requested match was not found.", null);

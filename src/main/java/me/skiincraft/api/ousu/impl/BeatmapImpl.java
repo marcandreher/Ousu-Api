@@ -2,7 +2,7 @@ package me.skiincraft.api.ousu.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
@@ -261,7 +261,7 @@ public class BeatmapImpl implements Beatmap {
 	}
 
 	public InputStream getBeatmapPreview() throws IOException {
-		URLConnection conn = new URL("http://b.ppy.sh/preview/" + getBeatmapSetId() + ".mp3").openConnection();
+		URLConnection conn = URI.create("http://b.ppy.sh/preview/" + getBeatmapSetId() + ".mp3").toURL().openConnection();
 		return conn.getInputStream();
 	}
 

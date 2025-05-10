@@ -16,17 +16,17 @@ public class SimpleJson {
 	
 	public JsonArray getJsonAsResource(String resource) {
 		InputStreamReader reader = new InputStreamReader(asInputStream(resource));
-		return new JsonParser().parse(reader).getAsJsonArray();
+		return JsonParser.parseReader(reader).getAsJsonArray();
 	}
 	
 	public JsonObject getJsonObjectAsResource(String resource) {
 		InputStreamReader reader = new InputStreamReader(asInputStream(resource));
-		return new JsonParser().parse(reader).getAsJsonObject();
+		return JsonParser.parseReader(reader).getAsJsonObject();
 	}
 	
 	public String getJsonStringAsResource(String resource) {
 		InputStreamReader reader = new InputStreamReader(asInputStream(resource));
-		JsonElement parser = new JsonParser().parse(reader);
+		JsonElement parser = JsonParser.parseReader(reader);
 		return parser.toString();
 	}
 

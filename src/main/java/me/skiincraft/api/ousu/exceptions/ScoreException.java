@@ -1,6 +1,5 @@
 package me.skiincraft.api.ousu.exceptions;
 
-@SuppressWarnings("serial")
 public class ScoreException extends IllegalArgumentException {
 
 	private final Exception originalerror;

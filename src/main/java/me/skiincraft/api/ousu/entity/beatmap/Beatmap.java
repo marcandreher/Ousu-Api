@@ -2,7 +2,7 @@ package me.skiincraft.api.ousu.entity.beatmap;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.time.OffsetDateTime;
@@ -265,7 +265,7 @@ public interface Beatmap {
 		int two = Integer.parseInt(String.valueOf(dif.charAt(2)));
 		
 		StringBuilder fstars = new StringBuilder();
-		float stars = new Float(new DecimalFormat("#.0").format(getStars()).replace(",", "."));  
+		float stars = Float.parseFloat(new DecimalFormat("#.0").format(getStars()).replace(",", "."));  
 				
 		for (int i = 0; i < one; i++) {
 			fstars.append("★");
@@ -302,7 +302,7 @@ public interface Beatmap {
 	 * <p>Is the beatmap cover url.</p>
 	 */
 	default InputStream getBeatmapPreview() throws IOException {
-		URLConnection conn = new URL("http://b.ppy.sh/preview/" + getBeatmapSetId() + ".mp3").openConnection();
+		URLConnection conn = URI.create("http://b.ppy.sh/preview/" + getBeatmapSetId() + ".mp3").toURL().openConnection();
 		return conn.getInputStream();
 	}
 	/**<h1>Get a Sample</h1>
