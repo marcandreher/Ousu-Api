@@ -3,3 +3,6 @@
 /.gradle/
 /build/
 .idea
+
+.m2/
+target/

@@ -10,44 +10,29 @@
   <version>2.0</version>
 
   <name>api</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url>https://github.com/marcandreher/Ousu-Api</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
-
   </properties>
-
-  <repositories>
-    <!-- Snapshots -->
-    <repository>
-      <id>reposilite-repository</id>
-      <url>https://maven.reposilite.com/snapshots</url>
-    </repository>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-  </repositories>
 
   <dependencies>
     <dependency>
-    <groupId>com.google.code.gson</groupId>
-    <artifactId>gson</artifactId>
-    <version>2.13.1</version>
-</dependency>
-<dependency>
-    <groupId>com.github.kevinsawicki</groupId>
-    <artifactId>http-request</artifactId>
-    <version>6.0</version>
-</dependency>
-<dependency>
-    <groupId>org.jsoup</groupId>
-    <artifactId>jsoup</artifactId>
-    <version>1.20.1</version>
-</dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.13.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.kevinsawicki</groupId>
+      <artifactId>http-request</artifactId>
+      <version>6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.20.1</version>
+    </dependency>
   </dependencies>
-
 </project>
